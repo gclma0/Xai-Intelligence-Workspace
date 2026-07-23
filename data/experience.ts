@@ -1,68 +1,67 @@
-import {
-  Activity,
-  BrainCircuit,
-  Database,
-  FileText,
-  GitBranch,
-  LayoutDashboard,
-  MessageSquare,
-  Network,
-  Sparkles,
-  Workflow,
-  Zap
-} from "lucide-react";
+import { Activity, BrainCircuit, CheckCircle, Database, FileText, GitBranch, LayoutDashboard, Workflow, Zap } from "lucide-react";
 
 export const navItems = [
   { label: "Product", href: "#top" },
-  { label: "Pipeline", href: "#neural-pipeline" },
-  { label: "Dashboard", href: "#intelligence-dashboard" },
-  { label: "Reasoning", href: "#reasoning-engine" },
-  { label: "Automations", href: "#automation-builder" }
+  { label: "Intelligence", href: "#intelligence-dashboard" },
+  { label: "Automations", href: "#automation-builder" },
+  { label: "Resources", href: "#" }
 ];
 
-export const insightStages = [
-  {
-    eyebrow: "01 / Ingest",
-    title: "Ingest Data",
-    copy: "Raw reports, warehouse tables, support threads, and event streams are normalized into a reliable product context.",
-    icon: Database,
-    metric: "4.8M events"
-  },
-  {
-    eyebrow: "02 / Analyze",
-    title: "Analyze with AI",
-    copy: "Entity relations, anomalies, and causal signals are scored through an explainable reasoning layer.",
-    icon: BrainCircuit,
-    metric: "94.8% confidence"
-  },
-  {
-    eyebrow: "03 / Act",
-    title: "Generate Insight",
-    copy: "Xai turns the model output into ranked recommendations and automations that teams can audit before execution.",
-    icon: Sparkles,
-    metric: "12 actions queued"
-  }
+export const pipelineSources = [
+  { label: "PDF_REPORT_Q3.PDF", icon: FileText },
+  { label: "CRM_LIVE_FEED", icon: Database },
+  { label: "ANALYTICS_V4.CSV", icon: Activity }
 ];
+
+export const pipelineOutputs = ["Knowledge Graph", "Real-time Insights", "Smart Automations"];
 
 export const dashboardNav = [
   { label: "Overview", icon: LayoutDashboard },
-  { label: "Sources", icon: FileText },
-  { label: "Reasoning", icon: Network },
+  { label: "Data Sources", icon: Database },
+  { label: "Intelligence", icon: BrainCircuit },
+  { label: "Reports", icon: FileText },
   { label: "Automations", icon: Workflow }
 ];
 
-export const tableRows = [
-  ["Tier 2 latency", "Support", "+42%", "Escalate"],
-  ["Usage drop", "Enterprise", "+18%", "Monitor"],
-  ["Pipeline drift", "Data Ops", "+9%", "Review"]
+export const dashboardFindings = [
+  {
+    finding: "Ticket resolution time increased by 4h for premium accounts.",
+    impact: "+42% impact"
+  },
+  {
+    finding: "Integration errors spikes detected in North America region.",
+    impact: "+18% impact"
+  }
+];
+
+export const forecastBars = [
+  { month: "SEP", height: 20 },
+  { month: "OCT", height: 35 },
+  { month: "NOV", height: 50 },
+  { month: "DEC", height: 75 },
+  { month: "JAN", height: 90 }
 ];
 
 export const reasoningEvents = [
-  { time: "08:42:11", label: "Input received", value: "EMAIL_CLIENT_A71_URGENT" },
-  { time: "08:42:12", label: "Sentiment classified", value: "FRUSTRATED / 91%" },
-  { time: "08:42:13", label: "SLA matched", value: "PLATINUM_ACCOUNT" },
-  { time: "08:42:14", label: "Recommendation", value: "PRIORITY_SUPPORT + SERVICE_CREDIT" }
+  { time: "08:42:11", message: "INPUT RECEIVED: EMAIL_CLIENT_A71_URGENT.eml", tone: "muted" },
+  { time: "08:42:12", message: "ANALYZING SENTIMENT... FRUSTRATED (91%)", tone: "error" },
+  { time: "08:42:13", message: "CROSS-REFERENCING SLA_TIER... PLATINUM_FOUND", tone: "primary" },
+  { time: "08:42:14", message: "CHECKING RECENT DOWNTIME... NODE_US_WEST_ERROR_DETECTED", tone: "default" }
 ];
+
+export const reasoningHighlights = [
+  {
+    title: "Step-by-Step Logic Logs",
+    copy: "Full transparency into every weighted decision."
+  },
+  {
+    title: "Cross-Entity Validation",
+    copy: "Data is verified against multiple internal sources."
+  }
+];
+
+export const reasoningRecommendation =
+  "Escalate to Priority Support and trigger automatic service credit for Node US West outage. Send personalized apology via CSM.";
 
 export const heroStats = [
   { label: "Connected sources", value: "128" },
@@ -70,13 +69,28 @@ export const heroStats = [
   { label: "Automation latency", value: "82ms" }
 ];
 
-export const workflowNodes = [Database, GitBranch, Activity, Sparkles];
+export const heroTrustIndicators = ["NOVA", "AXIS", "VERTEX"];
+
+export const heroCapabilities = [
+  {
+    title: "Connect fragmented data.",
+    copy: "Unify files, warehouse rows, customer records, and event streams into one operational context."
+  },
+  {
+    title: "Reveal meaningful intelligence.",
+    copy: "Surface causal signals, confidence levels, and relationships that decision-makers can evaluate quickly."
+  },
+  {
+    title: "Automate business decisions.",
+    copy: "Convert approved recommendations into auditable workflows with clear execution status."
+  }
+];
 
 export const automationSteps = [
   { label: "Trigger", value: "Webhook: Order", icon: Zap },
   { label: "AI Analysis", value: "Analyze Risk Profile", icon: BrainCircuit },
-  { label: "Entity Match", value: "Customer DB Sync", icon: Network },
-  { label: "Outcome", value: "Notify Team", icon: MessageSquare }
+  { label: "Entity Match", value: "Customer DB Sync", icon: GitBranch },
+  { label: "Outcome", value: "Notify Slack", icon: CheckCircle }
 ];
 
 export const footerLinks = ["Privacy", "Terms", "Security", "Contact"];
