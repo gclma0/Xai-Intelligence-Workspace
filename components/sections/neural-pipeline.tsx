@@ -37,10 +37,10 @@ export function NeuralPipeline() {
   }, [shouldReduceMotion]);
 
   return (
-    <section id="neural-pipeline" ref={rootRef} className="py-28">
+    <section id="neural-pipeline" ref={rootRef} className="py-20 md:py-28">
       <div className="page-shell">
         <motion.div
-          className="mb-16 text-center"
+          className="mb-12 text-center md:mb-16"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
@@ -50,7 +50,7 @@ export function NeuralPipeline() {
           <h2 className="mt-4 text-base font-medium tracking-[0] text-white">Seamless Data Translation</h2>
         </motion.div>
 
-        <div className="grid items-center gap-8 md:grid-cols-[1fr_1fr_160px_1fr_1fr]">
+        <div className="grid items-center gap-6 md:gap-8 lg:grid-cols-[1fr_1fr_160px_1fr_1fr]">
           <motion.div
             className="space-y-4"
             initial={shouldReduceMotion ? false : { opacity: 0, x: -24 }}
@@ -70,7 +70,7 @@ export function NeuralPipeline() {
             })}
           </motion.div>
 
-          <div className="hidden items-center md:flex" aria-hidden="true">
+          <div className="hidden items-center lg:flex" aria-hidden="true">
             <div className="pipeline-line h-px w-full bg-gradient-to-r from-transparent via-[var(--line)] to-[var(--primary)]" />
           </div>
 
@@ -89,7 +89,7 @@ export function NeuralPipeline() {
             <p className="mono mt-6 text-xs font-semibold text-[var(--primary)]">XAI CORE v2.4</p>
           </motion.div>
 
-          <div className="hidden items-center md:flex" aria-hidden="true">
+          <div className="hidden items-center lg:flex" aria-hidden="true">
             <div className="pipeline-line h-px w-full bg-gradient-to-r from-[var(--primary)] via-[var(--line)] to-transparent" />
           </div>
 

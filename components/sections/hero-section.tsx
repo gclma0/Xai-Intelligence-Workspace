@@ -28,7 +28,7 @@ export function HeroSection() {
   return (
     <section
       id="top"
-      className="page-shell grid min-h-[820px] items-center gap-8 overflow-hidden py-16 lg:grid-cols-10"
+      className="page-shell grid min-h-[calc(100vh-56px)] items-center gap-8 overflow-hidden py-12 md:min-h-[820px] md:py-16 lg:grid-cols-10"
       onPointerMove={(event) => {
         if (shouldReduceMotion) return;
         const rect = event.currentTarget.getBoundingClientRect();
@@ -44,7 +44,7 @@ export function HeroSection() {
       >
         <div className="space-y-4">
           <p className="text-2xl font-black text-[var(--primary)]">Xai</p>
-          <h1 className="max-w-[400px] text-[56px] font-bold leading-[1.05] tracking-[0]">
+          <h1 className="max-w-[400px] text-[42px] font-bold leading-[1.05] tracking-[0] sm:text-[48px] md:text-[56px]">
             Intelligence <br />
             Workspace
           </h1>
@@ -69,7 +69,7 @@ export function HeroSection() {
           <p className="mono text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
             Trusted by enterprise teams worldwide
           </p>
-          <div className="flex items-center gap-6 opacity-45 grayscale">
+          <div className="flex flex-wrap items-center gap-4 opacity-45 grayscale sm:gap-6">
             {heroTrustIndicators.map((indicator) => (
               <span key={indicator} className="surface mono flex h-6 w-20 items-center justify-center rounded-sm text-[10px] text-[var(--muted)]">
                 {indicator}
@@ -81,19 +81,19 @@ export function HeroSection() {
 
       <motion.div
         style={{ x, y }}
-        className="relative flex min-h-[500px] items-center justify-center lg:col-span-4"
+        className="relative flex min-h-[320px] items-center justify-center sm:min-h-[420px] lg:col-span-4 lg:min-h-[500px]"
         initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
         aria-label="Animated AI core visualization"
       >
         <div className="absolute h-64 w-64 rounded-full bg-[rgba(0,112,243,0.1)] blur-[80px]" />
-        <div className="relative h-[520px] w-full max-w-[520px] scale-125">
+        <div className="relative h-[320px] w-full max-w-[520px] scale-100 sm:h-[420px] lg:h-[520px] lg:scale-125">
           <IntelligenceCore />
         </div>
       </motion.div>
 
-      <aside className="flex h-full flex-col justify-center border-l border-[rgba(65,71,84,0.45)] pl-8 lg:col-span-3">
+      <aside className="flex h-full flex-col justify-center border-t border-[rgba(65,71,84,0.45)] pt-8 lg:col-span-3 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
         <div className="relative space-y-6">
           {heroCapabilities.map((capability, index) => {
             const isActive = index === activeCapability;

@@ -42,9 +42,9 @@ export function ReasoningEngine() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section id="reasoning-engine" className="relative overflow-hidden border-t border-[var(--line)] py-28">
+    <section id="reasoning-engine" className="relative overflow-hidden border-t border-[var(--line)] py-20 md:py-28">
       <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-[rgba(0,112,243,0.45)] to-transparent" />
-      <div className="page-shell grid items-center gap-16 lg:grid-cols-[0.9fr_1.1fr]">
+      <div className="page-shell grid items-center gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
         <motion.div
           className="space-y-8"
           initial={shouldReduceMotion ? false : { opacity: 0, x: -28 }}
@@ -54,7 +54,7 @@ export function ReasoningEngine() {
         >
           <div>
             <p className="eyebrow">The Reasoning Engine</p>
-            <h2 className="mt-8 max-w-lg text-5xl font-normal leading-tight tracking-[0]">
+            <h2 className="mt-8 max-w-lg text-4xl font-normal leading-tight tracking-[0] sm:text-5xl">
               Observe AI logic <br />
               in real-time.
             </h2>
@@ -79,7 +79,7 @@ export function ReasoningEngine() {
         </motion.div>
 
         <motion.div
-          className="relative flex min-h-[600px] items-center justify-center"
+          className="relative flex min-h-[480px] items-center justify-center sm:min-h-[600px]"
           initial={shouldReduceMotion ? false : { opacity: 0, x: 28 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-120px" }}
@@ -93,11 +93,11 @@ export function ReasoningEngine() {
             </svg>
           </div>
 
-          <article className="surface relative z-10 flex min-h-[520px] w-full max-w-[620px] flex-col border-[rgba(0,112,243,0.35)] bg-[rgba(18,18,18,0.9)] p-8 shadow-[0_0_50px_rgba(0,112,243,0.15)]">
-            <header className="mb-8 flex items-center justify-between border-b border-[rgba(65,71,84,0.45)] pb-5">
-              <div className="flex items-center gap-4">
+          <article className="surface relative z-10 flex min-h-[480px] w-full max-w-[620px] flex-col border-[rgba(0,112,243,0.35)] bg-[rgba(18,18,18,0.9)] p-5 shadow-[0_0_50px_rgba(0,112,243,0.15)] sm:min-h-[520px] sm:p-8">
+            <header className="mb-8 flex flex-col items-start justify-between gap-3 border-b border-[rgba(65,71,84,0.45)] pb-5 sm:flex-row sm:items-center">
+              <div className="flex min-w-0 items-center gap-4">
                 <span className="h-2.5 w-2.5 rounded-full bg-[var(--primary)]" aria-hidden="true" />
-                <h3 className="mono text-sm tracking-[0] text-white">REASONING_ENGINE::THREAD_492</h3>
+                <h3 className="mono truncate text-xs tracking-[0] text-white sm:text-sm">REASONING_ENGINE::THREAD_492</h3>
               </div>
               <span className="mono rounded border border-[rgba(0,112,243,0.3)] bg-[var(--primary-soft)] px-3 py-1 text-[10px] uppercase tracking-[0.08em] text-[var(--primary)]">
                 Live Stream
@@ -108,7 +108,7 @@ export function ReasoningEngine() {
               {reasoningEvents.map((event, index) => (
                 <motion.div
                   key={event.time}
-                  className={`mono flex gap-4 text-xs ${index >= 2 ? "border-l border-[rgba(0,112,243,0.32)] pl-4" : ""}`}
+                  className={`mono flex flex-col gap-1 text-xs sm:flex-row sm:gap-4 ${index >= 2 ? "border-l border-[rgba(0,112,243,0.32)] pl-4" : ""}`}
                   initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -126,7 +126,7 @@ export function ReasoningEngine() {
               </div>
             </div>
 
-            <footer className="mt-8 flex items-center justify-between border-t border-[rgba(65,71,84,0.32)] pt-5 text-[10px] uppercase tracking-[0.1em] text-[var(--muted)]">
+            <footer className="mt-8 flex flex-col items-start justify-between gap-3 border-t border-[rgba(65,71,84,0.32)] pt-5 text-[10px] uppercase tracking-[0.1em] text-[var(--muted)] sm:flex-row sm:items-center">
               <span className="flex items-center gap-3">
                 <span className="h-1.5 w-1.5 rounded-full bg-[rgba(111,211,163,0.75)]" aria-hidden="true" />
                 Status: Operational

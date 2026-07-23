@@ -26,7 +26,7 @@ export function SiteHeader() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
-      <div className="page-shell flex h-14 items-center justify-between">
+      <div className="page-shell flex h-14 items-center justify-between gap-4">
         <a className="text-lg font-semibold" href="#top" aria-label="Xai home">
           Xai
         </a>
@@ -41,11 +41,11 @@ export function SiteHeader() {
             </a>
           ))}
         </nav>
-        <div className="flex items-center gap-4">
+        <div className="flex shrink-0 items-center gap-4">
           <a className="hidden text-xs text-white transition-colors hover:text-[var(--primary)] sm:inline" href="#top">
             Sign In
           </a>
-          <a className="focus-ring rounded bg-[var(--primary)] px-5 py-2 text-xs font-semibold text-white" href="#intelligence-dashboard">
+          <a className="focus-ring rounded bg-[var(--primary)] px-4 py-2 text-xs font-semibold text-white sm:px-5" href="#intelligence-dashboard">
             Open Workspace
           </a>
         </div>

@@ -20,7 +20,7 @@ export function AutomationBuilder() {
   }, [shouldReduceMotion]);
 
   return (
-    <section id="automation-builder" className="border-y border-[var(--line)] bg-[rgba(28,27,27,0.92)] py-20">
+    <section id="automation-builder" className="border-y border-[var(--line)] bg-[rgba(28,27,27,0.92)] py-16 md:py-20">
       <div className="page-shell">
         <motion.div
           className="mb-12 text-center"
@@ -33,7 +33,7 @@ export function AutomationBuilder() {
           <p className="mt-4 text-sm text-[var(--text-soft)]">Build complex reasoning chains with zero friction.</p>
         </motion.div>
 
-        <div className="flex flex-col items-center justify-center gap-6 md:flex-row">
+        <div className="flex flex-col items-stretch justify-center gap-6 md:flex-row md:items-center">
           {automationSteps.map((step, index) => {
             const Icon = step.icon;
             const isAiNode = step.label === "AI Analysis";
@@ -43,7 +43,7 @@ export function AutomationBuilder() {
             return (
               <div key={step.label} className="flex flex-col items-center gap-6 md:flex-row">
                 <motion.article
-                  className={`relative min-w-[180px] rounded-lg border p-6 text-center transition-colors ${
+                  className={`relative w-full min-w-[180px] rounded-lg border p-6 text-center transition-colors md:w-auto ${
                     isAiNode
                       ? "border-[rgba(0,112,243,0.72)] bg-[rgba(0,112,243,0.06)] text-[var(--primary)]"
                       : "border-[var(--line)] bg-[var(--surface)] text-white"

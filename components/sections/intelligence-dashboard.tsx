@@ -8,7 +8,7 @@ export function IntelligenceDashboard() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section id="intelligence-dashboard" className="bg-[rgba(14,14,14,0.78)] py-16">
+    <section id="intelligence-dashboard" className="bg-[rgba(14,14,14,0.78)] py-12 md:py-16">
       <div className="page-shell">
         <motion.div
           className="overflow-hidden rounded-lg border border-[rgba(65,71,84,0.75)] bg-[rgba(18,18,18,0.82)] shadow-[0_24px_80px_rgba(0,0,0,0.42)]"
@@ -17,16 +17,16 @@ export function IntelligenceDashboard() {
           viewport={{ once: true, margin: "-120px" }}
           transition={{ duration: 0.65, ease: "easeOut" }}
         >
-          <div className="flex h-14 items-center justify-between border-b border-[rgba(65,71,84,0.75)] bg-[rgba(19,19,19,0.82)] px-6">
-            <div className="flex items-center gap-4">
+          <div className="flex min-h-14 items-center justify-between gap-4 border-b border-[rgba(65,71,84,0.75)] bg-[rgba(19,19,19,0.82)] px-4 py-3 sm:px-6">
+            <div className="flex min-w-0 items-center gap-4">
               <div className="flex gap-2" aria-hidden="true">
                 <span className="h-2.5 w-2.5 rounded-full border border-red-500/50 bg-red-500/20" />
                 <span className="h-2.5 w-2.5 rounded-full border border-yellow-500/50 bg-yellow-500/20" />
                 <span className="h-2.5 w-2.5 rounded-full border border-green-500/50 bg-green-500/20" />
               </div>
-              <p className="mono text-xs text-[var(--muted)]">workspace / analytics / overview</p>
+              <p className="mono truncate text-xs text-[var(--muted)]">workspace / analytics / overview</p>
             </div>
-            <div className="flex items-center gap-5 text-[var(--muted)]">
+            <div className="flex shrink-0 items-center gap-4 text-[var(--muted)] sm:gap-5">
               <Search className="h-4 w-4" aria-hidden="true" />
               <Bell className="h-4 w-4" aria-hidden="true" />
               <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--primary)] bg-[var(--primary-soft)] text-xs font-bold text-[var(--primary)]">
@@ -35,9 +35,9 @@ export function IntelligenceDashboard() {
             </div>
           </div>
 
-          <div className="grid min-h-[700px] lg:grid-cols-[248px_1fr]">
-            <aside className="border-r border-[rgba(65,71,84,0.75)] bg-[rgba(14,14,14,0.55)] px-4 py-6">
-              <nav className="space-y-1" aria-label="Workspace navigation">
+          <div className="grid min-h-[auto] lg:min-h-[700px] lg:grid-cols-[248px_1fr]">
+            <aside className="border-b border-[rgba(65,71,84,0.75)] bg-[rgba(14,14,14,0.55)] px-4 py-4 lg:border-b-0 lg:border-r lg:py-6">
+              <nav className="flex gap-2 overflow-x-auto lg:block lg:space-y-1" aria-label="Workspace navigation">
                 {dashboardNav.map((item, index) => {
                   const Icon = item.icon;
                   const isActive = index === 0;
@@ -46,7 +46,7 @@ export function IntelligenceDashboard() {
                     <button
                       key={item.label}
                       type="button"
-                      className={`focus-ring flex w-full items-center gap-3 rounded px-4 py-3 text-left text-sm transition-colors hover:bg-[var(--surface-2)] ${
+                      className={`focus-ring flex shrink-0 items-center gap-3 rounded px-4 py-3 text-left text-sm transition-colors hover:bg-[var(--surface-2)] lg:w-full ${
                         isActive ? "border-l-2 border-[var(--primary)] bg-[var(--surface-2)] text-[var(--primary)]" : "text-[var(--text-soft)]"
                       }`}
                     >
@@ -58,10 +58,10 @@ export function IntelligenceDashboard() {
               </nav>
             </aside>
 
-            <main className="grid gap-6 p-8 xl:grid-cols-[1.7fr_0.9fr]">
+            <main className="grid gap-6 p-4 sm:p-6 lg:p-8 xl:grid-cols-[1.7fr_0.9fr]">
               <div className="space-y-6">
-                <section className="surface bg-[rgba(0,112,243,0.05)] p-8">
-                  <h3 className="flex items-center gap-3 text-xl font-medium">
+                <section className="surface bg-[rgba(0,112,243,0.05)] p-5 sm:p-8">
+                  <h3 className="flex items-center gap-3 text-lg font-medium sm:text-xl">
                     <Sparkles className="h-5 w-5 text-[var(--primary)]" aria-hidden="true" />
                     Executive Intelligence Summary
                   </h3>
@@ -71,11 +71,11 @@ export function IntelligenceDashboard() {
                   </p>
                 </section>
 
-                <section className="surface p-8">
-                  <div className="flex items-start justify-between gap-6">
+                <section className="surface p-5 sm:p-8">
+                  <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:gap-6">
                     <div>
                       <p className="mono text-xs uppercase tracking-[0.08em] text-[var(--muted)]">Root Cause Analysis</p>
-                      <h3 className="mt-2 text-2xl font-medium">Why did churn increase?</h3>
+                      <h3 className="mt-2 text-xl font-medium sm:text-2xl">Why did churn increase?</h3>
                     </div>
                     <p className="mono rounded-full border border-[rgba(0,112,243,0.35)] bg-[var(--primary-soft)] px-4 py-2 text-xs text-[var(--primary)]">
                       Confidence: 94.8%
@@ -86,7 +86,7 @@ export function IntelligenceDashboard() {
                     {dashboardFindings.map((item, index) => (
                       <motion.li
                         key={item.finding}
-                        className="flex items-center gap-4 rounded border border-[rgba(65,71,84,0.35)] bg-[var(--surface-2)] p-4"
+                        className="flex flex-col items-start gap-3 rounded border border-[rgba(65,71,84,0.35)] bg-[var(--surface-2)] p-4 sm:flex-row sm:items-center sm:gap-4"
                         initial={shouldReduceMotion ? false : { opacity: 0, x: -14 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
@@ -102,7 +102,7 @@ export function IntelligenceDashboard() {
               </div>
 
               <div className="space-y-6">
-                <section className="surface relative h-64 overflow-hidden p-6">
+                <section className="surface relative h-56 overflow-hidden p-5 sm:h-64 sm:p-6">
                   <h3 className="mono relative z-10 text-xs uppercase tracking-[0.08em] text-[var(--muted)]">Entity Relations</h3>
                   <svg className="absolute inset-0 h-full w-full opacity-70" viewBox="0 0 320 240" aria-hidden="true">
                     <defs>

@@ -97,3 +97,9 @@ button {
     padding: 72px 0;
   }
 }
+
+@media (max-width: 420px) {
+  .page-shell {
+    width: min(100% - 24px, 1280px);
+  }
+}
