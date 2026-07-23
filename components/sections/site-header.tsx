@@ -1,8 +1,18 @@
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
 import { navItems } from "@/data/experience";
 
 export function SiteHeader() {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
-    <header className="site-header">
+    <motion.header
+      className="site-header"
+      initial={shouldReduceMotion ? false : { opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, ease: "easeOut" }}
+    >
       <div className="page-shell site-header__inner">
         <a className="site-header__brand focus-ring" href="#top" aria-label="Xai home">
           Xai
@@ -25,6 +35,6 @@ export function SiteHeader() {
           </a>
         </div>
       </div>
-    </header>
+    </motion.header>
   );
 }

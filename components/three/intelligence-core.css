@@ -1,0 +1,158 @@
+.intelligence-core {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.intelligence-core__fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.intelligence-core__fallback.is-hidden {
+  opacity: 0;
+}
+
+.intelligence-core__glow {
+  position: absolute;
+  width: 256px;
+  height: 256px;
+  border-radius: 999px;
+  background: rgba(0, 112, 243, 0.1);
+  filter: blur(80px);
+}
+
+.ai-core-ring {
+  position: absolute;
+  border: 1px solid;
+  border-radius: 9999px;
+}
+
+.ai-core-ring--1 {
+  width: 192px;
+  height: 192px;
+  border-color: rgba(0, 112, 243, 0.4);
+}
+
+.ai-core-ring--2 {
+  width: 256px;
+  height: 256px;
+  border-color: rgba(65, 71, 84, 0.2);
+}
+
+.ai-core-ring--3 {
+  width: 320px;
+  height: 320px;
+  border-color: rgba(0, 112, 243, 0.2);
+}
+
+.ai-core-ring--4 {
+  width: 128px;
+  height: 128px;
+  border-color: rgba(0, 112, 243, 0.6);
+  border-style: dashed;
+}
+
+.ai-core-ring--5 {
+  width: 300px;
+  height: 300px;
+  border-color: rgba(65, 71, 84, 0.12);
+  border-style: dashed;
+}
+
+.intelligence-core__center {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 160px;
+  height: 160px;
+  align-items: center;
+  justify-content: center;
+}
+
+.intelligence-core__diamond {
+  display: flex;
+  width: 80px;
+  height: 80px;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 112, 243, 0.82);
+  box-shadow: 0 0 40px rgba(0, 112, 243, 0.4);
+  transform: rotate(45deg);
+}
+
+.intelligence-core__diamond svg {
+  width: 32px;
+  height: 32px;
+  color: #ffffff;
+  transform: rotate(-45deg);
+}
+
+.data-block {
+  position: absolute;
+  background: rgba(0, 112, 243, 0.1);
+  border: 1px solid rgba(0, 112, 243, 0.3);
+}
+
+.data-block--1 {
+  top: -16px;
+  right: -16px;
+  width: 32px;
+  height: 32px;
+  transform: rotate(12deg);
+}
+
+.data-block--2 {
+  top: 50%;
+  left: -32px;
+  width: 24px;
+  height: 24px;
+  transform: rotate(-12deg);
+}
+
+.data-block--3 {
+  right: 48px;
+  bottom: -8px;
+  width: 40px;
+  height: 40px;
+  transform: rotate(45deg);
+}
+
+.data-block--4 {
+  top: -48px;
+  left: 16px;
+  width: 16px;
+  height: 16px;
+  background: rgba(0, 112, 243, 0.4);
+}
+
+.data-block--5 {
+  right: -48px;
+  bottom: 32px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 112, 243, 0.3);
+  transform: rotate(-45deg);
+}
+
+.intelligence-core__lines {
+  position: absolute;
+  inset: -120px;
+  width: calc(100% + 240px);
+  height: calc(100% + 240px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.intelligence-core__canvas {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  width: 100%;
+}

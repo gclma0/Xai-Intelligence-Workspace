@@ -1,9 +1,43 @@
+"use client";
+
 import { BrainCircuit } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { useReducedMotion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { pipelineOutputs, pipelineSources } from "@/data/experience";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export function NeuralPipeline() {
+  const rootRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!rootRef.current || shouldReduceMotion) return;
+
+    const context = gsap.context(() => {
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: rootRef.current,
+          start: "top 72%",
+          once: true
+        }
+      });
+
+      timeline
+        .from(".pipeline-source-card", { opacity: 0, y: 14, stagger: 0.08, duration: 0.35, ease: "power2.out" })
+        .from(".pipeline-line--left", { scaleX: 0, duration: 0.35, ease: "power1.out" }, "-=0.12")
+        .from(".pipeline-core__ring", { scale: 0.92, boxShadow: "0 0 0 rgba(0,112,243,0)", duration: 0.28, ease: "power2.out" })
+        .from(".pipeline-line--right", { scaleX: 0, duration: 0.35, ease: "power1.out" })
+        .from(".pipeline-output-card", { opacity: 0, y: 14, stagger: 0.08, duration: 0.35, ease: "power2.out" }, "-=0.05");
+    }, rootRef);
+
+    return () => context.revert();
+  }, [shouldReduceMotion]);
+
   return (
-    <section id="neural-pipeline" className="pipeline-section">
+    <section id="neural-pipeline" className="pipeline-section" ref={rootRef}>
       <div className="page-shell">
         <div className="section-heading">
           <p className="eyebrow">Neural Pipeline</p>
@@ -16,7 +50,7 @@ export function NeuralPipeline() {
               const Icon = source.icon;
 
               return (
-                <article key={source.label} className="glass-surface pipeline-card">
+                <article key={source.label} className="glass-surface pipeline-card pipeline-source-card">
                   <Icon aria-hidden="true" />
                   <span>{source.label}</span>
                 </article>
@@ -24,7 +58,7 @@ export function NeuralPipeline() {
             })}
           </div>
 
-          <div className="pipeline-line" aria-hidden="true" />
+          <div className="pipeline-line pipeline-line--left" aria-hidden="true" />
 
           <div className="pipeline-core">
             <div className="pipeline-core__ring">
@@ -39,7 +73,7 @@ export function NeuralPipeline() {
 
           <div className="pipeline-stack">
             {pipelineOutputs.map((output, index) => (
-              <article key={output} className={`glass-surface pipeline-card pipeline-card--output ${index === 0 ? "pipeline-card--active" : ""}`}>
+              <article key={output} className={`glass-surface pipeline-card pipeline-card--output pipeline-output-card ${index === 0 ? "pipeline-card--active" : ""}`}>
                 {output}
               </article>
             ))}

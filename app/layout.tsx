@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import "@/components/sections/sections.css";
+import "@/components/three/intelligence-core.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const geistMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-geist-mono" });

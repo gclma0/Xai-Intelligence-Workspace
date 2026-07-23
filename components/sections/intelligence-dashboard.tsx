@@ -1,3 +1,6 @@
+"use client";
+
+import { motion, useReducedMotion } from "framer-motion";
 import { Bell, Search, Sparkles } from "lucide-react";
 import { dashboardFindings, dashboardNav, forecastBars } from "@/data/experience";
 
@@ -38,10 +41,18 @@ function EntityGraph() {
 }
 
 export function IntelligenceDashboard() {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
     <section id="intelligence-dashboard" className="dashboard-section">
       <div className="page-shell">
-        <div className="glass-surface dashboard-window">
+        <motion.div
+          className="glass-surface dashboard-window"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-120px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <div className="dashboard-topbar">
             <div className="dashboard-window-controls">
               <span className="dashboard-dot dashboard-dot--red" />
@@ -58,7 +69,13 @@ export function IntelligenceDashboard() {
           </div>
 
           <div className="dashboard-body">
-            <aside className="dashboard-sidebar">
+            <motion.aside
+              className="dashboard-sidebar"
+              initial={shouldReduceMotion ? false : { opacity: 0, x: -18 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45, delay: 0.12, ease: "easeOut" }}
+            >
               <nav className="dashboard-nav" aria-label="Workspace navigation">
                 {dashboardNav.map((item, index) => {
                   const Icon = item.icon;
@@ -71,12 +88,12 @@ export function IntelligenceDashboard() {
                   );
                 })}
               </nav>
-            </aside>
+            </motion.aside>
 
             <main className="dashboard-main">
               <div className="dashboard-grid">
                 <div className="dashboard-left">
-                  <section className="glass-surface dashboard-card dashboard-card--summary">
+                  <motion.section className="glass-surface dashboard-card dashboard-card--summary" initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.16 }}>
                     <h3 className="dashboard-summary-title">
                       <Sparkles aria-hidden="true" />
                       Executive Intelligence Summary
@@ -85,9 +102,9 @@ export function IntelligenceDashboard() {
                       Operational efficiency has increased by <strong>12.4%</strong> this week. Analysis of CRM activity indicates a slight deviation in churn probability within
                       the SaaS segment, specifically related to response latency in Tier 2 support tickets.
                     </p>
-                  </section>
+                  </motion.section>
 
-                  <section className="glass-surface dashboard-card">
+                  <motion.section className="glass-surface dashboard-card" initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.24 }}>
                     <div className="dashboard-card__header">
                       <div>
                         <h4 className="dashboard-label">Root Cause Analysis</h4>
@@ -105,20 +122,28 @@ export function IntelligenceDashboard() {
                         </li>
                       ))}
                     </ul>
-                  </section>
+                  </motion.section>
                 </div>
 
                 <div className="dashboard-right">
-                  <section className="glass-surface entity-card">
+                  <motion.section className="glass-surface entity-card" initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.3 }}>
                     <h4>Entity Relations</h4>
                     <EntityGraph />
-                  </section>
+                  </motion.section>
 
-                  <section className="glass-surface forecast-card">
+                  <motion.section className="glass-surface forecast-card" initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.36 }}>
                     <h4>Growth Forecast</h4>
                     <div className="forecast-bars">
-                      {forecastBars.map((bar) => (
-                        <span key={bar.month} className="forecast-bar" style={{ height: `${bar.height}%` }} />
+                      {forecastBars.map((bar, index) => (
+                        <motion.span
+                          key={bar.month}
+                          className="forecast-bar"
+                          style={{ height: `${bar.height}%` }}
+                          initial={shouldReduceMotion ? false : { scaleY: 0, transformOrigin: "bottom" }}
+                          whileInView={{ scaleY: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.5, delay: 0.42 + index * 0.06, ease: "easeOut" }}
+                        />
                       ))}
                     </div>
                     <div className="forecast-labels">
@@ -126,12 +151,12 @@ export function IntelligenceDashboard() {
                         <span key={bar.month}>{bar.month}</span>
                       ))}
                     </div>
-                  </section>
+                  </motion.section>
                 </div>
               </div>
             </main>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

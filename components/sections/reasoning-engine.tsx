@@ -1,5 +1,13 @@
+"use client";
+
 import { Check } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { useReducedMotion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { reasoningEvents, reasoningHighlights, reasoningRecommendation } from "@/data/experience";
+
+gsap.registerPlugin(ScrollTrigger);
 
 function eventClassName(tone: string) {
   if (tone === "error") return "tone-error";
@@ -24,8 +32,33 @@ function KnowledgeGraphBackdrop() {
 }
 
 export function ReasoningEngine() {
+  const rootRef = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (!rootRef.current || shouldReduceMotion) return;
+
+    const context = gsap.context(() => {
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: rootRef.current,
+            start: "top 70%",
+            once: true
+          }
+        })
+        .from(".reasoning-copy", { opacity: 0, x: -24, duration: 0.45, ease: "power2.out" })
+        .from(".knowledge-graph-bg", { opacity: 0, scale: 0.98, duration: 0.45, ease: "power2.out" }, "-=0.1")
+        .from(".reasoning-panel", { opacity: 0, y: 24, scale: 0.985, duration: 0.5, ease: "power2.out" }, "-=0.18")
+        .from(".reasoning-log__row", { opacity: 0, y: 10, stagger: 0.09, duration: 0.3, ease: "power2.out" })
+        .from(".recommendation", { opacity: 0, y: 12, duration: 0.35, ease: "power2.out" }, "-=0.05");
+    }, rootRef);
+
+    return () => context.revert();
+  }, [shouldReduceMotion]);
+
   return (
-    <section id="reasoning-engine" className="reasoning-section">
+    <section id="reasoning-engine" className="reasoning-section" ref={rootRef}>
       <div className="page-shell reasoning-grid">
         <div className="reasoning-copy">
           <p className="eyebrow">The Reasoning Engine</p>
