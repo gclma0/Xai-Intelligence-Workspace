@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,6 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function AutomationBuilder() {
   const rootRef = useRef<HTMLElement>(null);
+  const [activeStep, setActiveStep] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
@@ -35,6 +36,35 @@ export function AutomationBuilder() {
     return () => context.revert();
   }, [shouldReduceMotion]);
 
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setActiveStep(automationSteps.length - 1);
+      return;
+    }
+
+    const root = rootRef.current;
+    if (!root) return;
+
+    let timer: number | undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || timer) return;
+
+        timer = window.setInterval(() => {
+          setActiveStep((current) => (current + 1) % automationSteps.length);
+        }, 950);
+      },
+      { threshold: 0.45 }
+    );
+
+    observer.observe(root);
+
+    return () => {
+      observer.disconnect();
+      if (timer) window.clearInterval(timer);
+    };
+  }, [shouldReduceMotion]);
+
   return (
     <section id="automation-builder" className="automation-section" ref={rootRef}>
       <div className="page-shell">
@@ -51,7 +81,11 @@ export function AutomationBuilder() {
 
             return (
               <div key={step.label} className="automation-flow__item" role="listitem">
-                <article className={`technical-border automation-step ${isAiNode ? "automation-step--ai" : ""} ${isLast ? "automation-step--outcome" : ""}`}>
+                <article
+                  className={`technical-border automation-step ${isAiNode ? "automation-step--ai" : ""} ${isLast ? "automation-step--outcome" : ""} ${
+                    index === activeStep ? "is-active" : ""
+                  } ${index < activeStep ? "is-complete" : ""}`}
+                >
                   {isAiNode ? <span className="automation-step__badge">AI Engine</span> : null}
                   <Icon aria-hidden="true" />
                   <p className="automation-step__label">{step.label}</p>
@@ -59,7 +93,7 @@ export function AutomationBuilder() {
                 </article>
 
                 {!isLast ? (
-                  <span className="automation-arrow" aria-hidden="true">
+                  <span className={`automation-arrow ${index < activeStep ? "is-active" : ""}`} aria-hidden="true">
                     <ArrowRight />
                   </span>
                 ) : null}

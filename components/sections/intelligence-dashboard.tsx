@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Bell, Search, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { dashboardFindings, dashboardNav, dashboardTableRows, dashboardTabs, forecastBars } from "@/data/experience";
 
 function EntityGraph() {
@@ -20,8 +20,8 @@ function EntityGraph() {
       {[40, 80, 120, 160, 200].map((y) => (
         <line key={`h-${y}`} x1="0" x2="320" y1={y} y2={y} stroke="#1b2735" strokeWidth="0.6" />
       ))}
-      <path d="M42 174 L86 74 L126 98 L176 132 L248 70 L286 154" fill="none" stroke="#0070f3" strokeOpacity="0.75" strokeWidth="1" />
-      <path d="M86 74 L142 184 L176 132 L234 164 L286 154" fill="none" stroke="#aec6ff" strokeOpacity="0.3" strokeWidth="1" />
+      <path className="entity-graph__path entity-graph__path--primary" d="M42 174 L86 74 L126 98 L176 132 L248 70 L286 154" fill="none" stroke="#0070f3" strokeOpacity="0.75" strokeWidth="1" />
+      <path className="entity-graph__path entity-graph__path--secondary" d="M86 74 L142 184 L176 132 L234 164 L286 154" fill="none" stroke="#aec6ff" strokeOpacity="0.3" strokeWidth="1" />
       {[
         [42, 174],
         [86, 74],
@@ -32,7 +32,7 @@ function EntityGraph() {
         [248, 70],
         [286, 154]
       ].map(([x, y]) => (
-        <g key={`${x}-${y}`}>
+        <g key={`${x}-${y}`} className="entity-graph__node">
           <circle cx={x} cy={y} r="16" fill="url(#entity-node-glow)" />
           <circle cx={x} cy={y} r="3" fill="#0070f3" />
         </g>
@@ -43,7 +43,46 @@ function EntityGraph() {
 
 export function IntelligenceDashboard() {
   const [activeTab, setActiveTab] = useState(0);
+  const [efficiencyValue, setEfficiencyValue] = useState(0);
+  const summaryRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setEfficiencyValue(12.4);
+      return;
+    }
+
+    const summary = summaryRef.current;
+    if (!summary) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+
+        const startedAt = performance.now();
+        const duration = 950;
+
+        function tick(now: number) {
+          const progress = Math.min((now - startedAt) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          setEfficiencyValue(Number((12.4 * eased).toFixed(1)));
+
+          if (progress < 1) {
+            window.requestAnimationFrame(tick);
+          }
+        }
+
+        window.requestAnimationFrame(tick);
+        observer.disconnect();
+      },
+      { threshold: 0.45 }
+    );
+
+    observer.observe(summary);
+
+    return () => observer.disconnect();
+  }, [shouldReduceMotion]);
 
   return (
     <section id="intelligence-dashboard" className="dashboard-section">
@@ -95,13 +134,20 @@ export function IntelligenceDashboard() {
             <main className="dashboard-main">
               <div className="dashboard-grid">
                 <div className="dashboard-left">
-                  <motion.section className="glass-surface dashboard-card dashboard-card--summary" initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.16 }}>
+                  <motion.section
+                    ref={summaryRef}
+                    className="glass-surface dashboard-card dashboard-card--summary"
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.45, delay: 0.16 }}
+                  >
                     <h3 className="dashboard-summary-title">
                       <Sparkles aria-hidden="true" />
                       Executive Intelligence Summary
                     </h3>
                     <p>
-                      Operational efficiency has increased by <strong>12.4%</strong> this week. Analysis of CRM activity indicates a slight deviation in churn probability within
+                      Operational efficiency has increased by <strong>{efficiencyValue.toFixed(1)}%</strong> this week. Analysis of CRM activity indicates a slight deviation in churn probability within
                       the SaaS segment, specifically related to response latency in Tier 2 support tickets.
                     </p>
 

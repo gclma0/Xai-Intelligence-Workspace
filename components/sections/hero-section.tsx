@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { BrainCircuit } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { useEffect, useState } from "react";
 import { heroCapabilities, heroTrustIndicators } from "@/data/experience";
 
@@ -18,7 +18,7 @@ function IntelligenceCoreFallback() {
         <div className="ai-core-ring ai-core-ring--5" />
         <div className="intelligence-core__center">
           <div className="intelligence-core__diamond">
-            <BrainCircuit />
+            <Lightbulb />
           </div>
           <span className="data-block data-block--1" />
           <span className="data-block data-block--2" />
@@ -39,13 +39,14 @@ const IntelligenceCore = dynamic(() => import("@/components/three/intelligence-c
 export function HeroSection() {
   const [activeCapability, setActiveCapability] = useState(0);
   const shouldReduceMotion = useReducedMotion();
+  const activeHeroCapability = heroCapabilities[activeCapability];
 
   useEffect(() => {
     if (shouldReduceMotion) return;
 
     const timer = window.setInterval(() => {
       setActiveCapability((current) => (current + 1) % heroCapabilities.length);
-    }, 3500);
+    }, 2600);
 
     return () => window.clearInterval(timer);
   }, [shouldReduceMotion]);
@@ -98,41 +99,33 @@ export function HeroSection() {
           </div>
         </motion.div>
 
-        <aside className="hero-capabilities" aria-label="Xai capabilities">
+        <motion.aside
+          className="hero-capabilities"
+          aria-label="Xai capabilities"
+          initial={shouldReduceMotion ? false : "hidden"}
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: { transition: { delayChildren: 0.55, staggerChildren: 0.38 } }
+          }}
+        >
           <div className="hero-capabilities__list">
-            {heroCapabilities.map((capability, index) => (
-              <motion.button
-                key={capability.title}
-                type="button"
-                className={`hero-capability ${index === activeCapability ? "is-active" : ""}`}
-                onClick={() => setActiveCapability(index)}
-                aria-pressed={index === activeCapability}
-                initial={false}
-                animate={index === activeCapability && !shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0.3, y: 0 }}
-                transition={{ duration: 0.28, ease: "easeOut" }}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeHeroCapability.title}
+                className="hero-capability hero-capability--single is-active"
+                aria-live="polite"
+                initial={shouldReduceMotion ? false : { opacity: 0, x: 28, filter: "blur(6px)" }}
+                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -18, filter: "blur(4px)" }}
+                transition={{ duration: 0.58, ease: "easeOut" }}
               >
                 <span className="hero-capability__dot" aria-hidden="true" />
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={`${capability.title}-${activeCapability === index}`}
-                    className="hero-capability__title"
-                    initial={shouldReduceMotion ? false : { opacity: 0.65, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
-                    transition={{ duration: 0.28, ease: "easeOut" }}
-                  >
-                    {capability.title}
-                  </motion.span>
-                </AnimatePresence>
-              </motion.button>
-            ))}
-            <div className="hero-capabilities__indicator" aria-hidden="true">
-              <span />
-              <span />
-              <span />
-            </div>
+                <span className="hero-capability__title">{activeHeroCapability.title}</span>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </aside>
+        </motion.aside>
       </div>
     </section>
   );
