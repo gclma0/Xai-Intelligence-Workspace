@@ -1,0 +1,84 @@
+:root {
+  --background: #050505;
+  --surface: #121212;
+  --surface-2: #1a1a1a;
+  --line: #242424;
+  --muted: #888888;
+  --text: #ffffff;
+  --text-soft: #c7c7c7;
+  --primary: #0070f3;
+  --primary-soft: rgba(0, 112, 243, 0.14);
+  --success: #6fd3a3;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  color: var(--text);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px) 0 0 / 72px 72px,
+    linear-gradient(0deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px) 0 0 / 72px 72px,
+    var(--background);
+  color: var(--text);
+  font-family: var(--font-inter), Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+.page-shell {
+  width: min(1280px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.section {
+  padding: 112px 0;
+}
+
+.surface {
+  background: rgba(18, 18, 18, 0.88);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.mono {
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.eyebrow {
+  color: var(--primary);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid rgba(0, 112, 243, 0.65);
+  outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+  .page-shell {
+    width: min(100% - 32px, 1280px);
+  }
+
+  .section {
+    padding: 72px 0;
+  }
+}
