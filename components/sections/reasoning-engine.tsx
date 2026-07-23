@@ -1,6 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
+import type { CSSProperties, PointerEvent } from "react";
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import gsap from "gsap";
@@ -34,6 +35,28 @@ function KnowledgeGraphBackdrop() {
 export function ReasoningEngine() {
   const rootRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
+
+  function updateDepth(event: PointerEvent<HTMLDivElement>) {
+    if (shouldReduceMotion) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+    event.currentTarget.classList.add("is-interacting");
+    event.currentTarget.style.setProperty("--reasoning-tilt-x", `${x * 5}deg`);
+    event.currentTarget.style.setProperty("--reasoning-tilt-y", `${y * -5}deg`);
+    event.currentTarget.style.setProperty("--reasoning-shift-x", `${x * 8}px`);
+    event.currentTarget.style.setProperty("--reasoning-shift-y", `${y * 8}px`);
+  }
+
+  function resetDepth(event: PointerEvent<HTMLDivElement>) {
+    event.currentTarget.classList.remove("is-interacting");
+    event.currentTarget.style.setProperty("--reasoning-tilt-x", "0deg");
+    event.currentTarget.style.setProperty("--reasoning-tilt-y", "0deg");
+    event.currentTarget.style.setProperty("--reasoning-shift-x", "0px");
+    event.currentTarget.style.setProperty("--reasoning-shift-y", "0px");
+  }
 
   useEffect(() => {
     if (!rootRef.current || shouldReduceMotion) return;
@@ -85,7 +108,19 @@ export function ReasoningEngine() {
           </div>
         </div>
 
-        <div className="reasoning-visual">
+        <div
+          className="reasoning-visual"
+          onPointerMove={updateDepth}
+          onPointerLeave={resetDepth}
+          style={
+            {
+              "--reasoning-tilt-x": "0deg",
+              "--reasoning-tilt-y": "0deg",
+              "--reasoning-shift-x": "0px",
+              "--reasoning-shift-y": "0px"
+            } as CSSProperties
+          }
+        >
           <KnowledgeGraphBackdrop />
           <svg className="reasoning-geometry" viewBox="0 0 520 520" aria-hidden="true">
             <path d="M60 280 C160 120 260 420 458 180" fill="none" stroke="#0070f3" strokeWidth="1" />

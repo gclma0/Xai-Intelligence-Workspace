@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { pipelineOutputs, pipelineSources } from "@/data/experience";
+import { pipelineOutputs, pipelineSources, pipelineStages } from "@/data/experience";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,6 +46,7 @@ export function NeuralPipeline() {
 
         <div className="pipeline-grid">
           <div className="pipeline-stack">
+            <p className="pipeline-stage-label">{pipelineStages[0]}</p>
             {pipelineSources.map((source) => {
               const Icon = source.icon;
 
@@ -61,17 +62,19 @@ export function NeuralPipeline() {
           <div className="pipeline-line pipeline-line--left" aria-hidden="true" />
 
           <div className="pipeline-core">
+            <p className="pipeline-stage-label">{pipelineStages[1]}</p>
             <div className="pipeline-core__ring">
               <div className="pipeline-core__diamond">
                 <BrainCircuit aria-hidden="true" />
               </div>
             </div>
-            <p>XAI CORE v2.4</p>
+            <p className="pipeline-core__label">XAI CORE v2.4</p>
           </div>
 
           <div className="pipeline-line pipeline-line--right" aria-hidden="true" />
 
           <div className="pipeline-stack">
+            <p className="pipeline-stage-label">{pipelineStages[2]}</p>
             {pipelineOutputs.map((output, index) => (
               <article key={output} className={`glass-surface pipeline-card pipeline-card--output pipeline-output-card ${index === 0 ? "pipeline-card--active" : ""}`}>
                 {output}

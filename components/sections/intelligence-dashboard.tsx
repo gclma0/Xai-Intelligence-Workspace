@@ -1,8 +1,9 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Bell, Search, Sparkles } from "lucide-react";
-import { dashboardFindings, dashboardNav, forecastBars } from "@/data/experience";
+import { useState } from "react";
+import { dashboardFindings, dashboardNav, dashboardTableRows, dashboardTabs, forecastBars } from "@/data/experience";
 
 function EntityGraph() {
   return (
@@ -41,6 +42,7 @@ function EntityGraph() {
 }
 
 export function IntelligenceDashboard() {
+  const [activeTab, setActiveTab] = useState(0);
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -102,6 +104,39 @@ export function IntelligenceDashboard() {
                       Operational efficiency has increased by <strong>12.4%</strong> this week. Analysis of CRM activity indicates a slight deviation in churn probability within
                       the SaaS segment, specifically related to response latency in Tier 2 support tickets.
                     </p>
+
+                    <div className="dashboard-tabs" role="tablist" aria-label="Dashboard intelligence views">
+                      {dashboardTabs.map((tab, index) => (
+                        <button
+                          key={tab.label}
+                          className="dashboard-tab focus-ring"
+                          type="button"
+                          role="tab"
+                          aria-selected={activeTab === index}
+                          aria-controls="dashboard-tab-panel"
+                          id={`dashboard-tab-${index}`}
+                          onClick={() => setActiveTab(index)}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <AnimatePresence mode="wait">
+                      <motion.p
+                        key={dashboardTabs[activeTab].label}
+                        id="dashboard-tab-panel"
+                        role="tabpanel"
+                        aria-labelledby={`dashboard-tab-${activeTab}`}
+                        className="dashboard-tab-panel"
+                        initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: -8 }}
+                        transition={{ duration: 0.22, ease: "easeOut" }}
+                      >
+                        {dashboardTabs[activeTab].summary}
+                      </motion.p>
+                    </AnimatePresence>
                   </motion.section>
 
                   <motion.section className="glass-surface dashboard-card" initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, delay: 0.24 }}>
@@ -122,6 +157,29 @@ export function IntelligenceDashboard() {
                         </li>
                       ))}
                     </ul>
+
+                    <div className="dashboard-table-wrap">
+                      <table className="dashboard-table">
+                        <thead>
+                          <tr>
+                            <th>Account</th>
+                            <th>Signal</th>
+                            <th>Risk</th>
+                            <th>Owner</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {dashboardTableRows.map((row) => (
+                            <tr key={row.account}>
+                              <td>{row.account}</td>
+                              <td>{row.signal}</td>
+                              <td>{row.risk}</td>
+                              <td>{row.owner}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </motion.section>
                 </div>
 

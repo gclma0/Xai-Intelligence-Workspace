@@ -13,6 +13,8 @@ export const pipelineSources = [
   { label: "ANALYTICS_V4.CSV", icon: Activity }
 ];
 
+export const pipelineStages = ["Ingest Data", "Analyze with AI", "Generate Insight"];
+
 export const pipelineOutputs = ["Knowledge Graph", "Real-time Insights", "Smart Automations"];
 
 export const dashboardNav = [
@@ -40,6 +42,27 @@ export const forecastBars = [
   { month: "NOV", height: 50 },
   { month: "DEC", height: 75 },
   { month: "JAN", height: 90 }
+];
+
+export const dashboardTabs = [
+  {
+    label: "Signals",
+    summary: "12 correlated churn signals detected across support, billing, and product usage."
+  },
+  {
+    label: "Accounts",
+    summary: "Premium SaaS accounts show the highest risk concentration this week."
+  },
+  {
+    label: "Actions",
+    summary: "Two recommended automations are ready for review with high confidence."
+  }
+];
+
+export const dashboardTableRows = [
+  { account: "Northwind Cloud", signal: "Support latency", risk: "High", owner: "CSM" },
+  { account: "Vertex Labs", signal: "Integration errors", risk: "Medium", owner: "Ops" },
+  { account: "Nova Systems", signal: "Usage drop", risk: "Low", owner: "Growth" }
 ];
 
 export const reasoningEvents = [
