@@ -1,112 +1,63 @@
-Read AGENTS.md and all referenced documentation before making any changes.
+Read AGENTS.md and only fix the Knowledge Graph visualization inside the Neural Pipeline popup.
 
-Implement the Neural Pipeline as the signature interaction of the landing page. Preserve the current layout, spacing, typography, colors, and responsive behavior exactly. Do not redesign the section—only enhance it with premium, coordinated animations.
+Do not change the popup size, layout, colors, borders, typography, animations, or overall pipeline sequence.
 
-Objective:
-Transform the static pipeline into a believable AI processing workflow that tells a complete story:
+The popup is already the correct size. The problem is ONLY the graph implementation.
 
-INGEST DATA → ANALYZE WITH AI → GENERATE INSIGHTS
+Current issue:
+The graph renders as a tiny cluster in the top-left corner while the graph container is almost empty. This means the graph viewport/layout is incorrect, not the popup.
 
-Animation Stack:
-- GSAP + ScrollTrigger for the overall timeline.
-- Framer Motion only for subtle hover and idle interactions.
-- Reuse the existing React Three Fiber AI Core. Do not replace or redesign it.
+Your task is to completely rebuild the graph visualization so it naturally fills the available graph area.
 
-Interaction Flow:
+Requirements:
 
-1. Section Trigger
-- Start the animation once when approximately 40% of the section enters the viewport.
-- The full sequence should run once and then remain in its completed state.
-- Do not replay continuously while scrolling.
+• Treat the graph as a responsive visualization, not a static image.
+• The graph should occupy approximately 80–90% of the available graph canvas.
+• Center the graph horizontally and vertically.
+• Distribute nodes across the entire canvas rather than clustering them in one corner.
+• Scale node positions relative to the container dimensions instead of using tiny fixed coordinates.
+• Ensure connection lines span naturally across the graph.
+• Increase node size and label readability.
+• Use the full width and height of the graph container.
 
-2. Ingest Data
-- Sequentially activate the three source cards:
-  1. PDF_REPORT_Q3.PDF
-  2. CRM_LIVE_FEED
-  3. ANALYTICS_V4.CSV
-- Each card briefly glows with the brand accent color.
-- Do NOT move the cards themselves.
-- Instead, extract a thin glowing data pulse from the active card.
-- The pulse travels through the connector line toward the AI Core.
-- Repeat for each source with a short stagger.
+Implementation guidance:
 
-3. AI Analysis
-After each pulse reaches the AI Core:
-- The core reacts with a subtle energy pulse.
-- Orbital rings rotate slightly faster.
-- Orbiting nodes accelerate briefly.
-- Connection lines brighten.
-- A soft circular wave expands outward.
-- The effect should communicate "thinking", not "exploding".
-- Keep this analysis sequence around 1.5–2 seconds.
+If using SVG:
+- Create a proper responsive SVG.
+- Use width="100%" and height="100%".
+- Use a correct viewBox matching the designed coordinate system.
+- Remove any transform: scale(...) that shrinks the graph.
+- Remove fixed pixel positioning that assumes a small canvas.
 
-4. Generate Insights
-Once analysis finishes:
-- A glowing pulse exits the AI Core and travels through the right connector line.
+If using React Flow:
+- Call fitView() after the popup finishes expanding.
+- Recalculate layout after mount.
+- Ensure the parent container has a real width and height before rendering.
+- Disable excessive padding in fitView.
 
-5. Sequential Output Reveal
-Reveal only ONE output at a time.
+If using Canvas:
+- Redraw using the actual container width and height.
+- Compute node positions dynamically from the container size.
+- Scale the graph proportionally.
 
-A. Knowledge Graph
-- Highlight the Knowledge Graph card.
-- A floating preview panel appears beside it.
-- Show a miniature interactive-looking node graph with connected entities.
-- Keep it visible for approximately 2 seconds.
-- Fade it away.
-- Mark the card as completed with a subtle success indicator.
+Visual target:
 
-B. Real-time Insights
-- Highlight the Real-time Insights card.
-- Display a floating intelligence panel containing:
-  - confidence score;
-  - key insight;
-  - short AI explanation;
-  - miniature chart or KPI.
-- Hold for approximately 2 seconds.
-- Fade away.
-- Mark completed.
+The graph should resemble an enterprise knowledge graph:
+- approximately 6–8 nodes
+- evenly distributed
+- one central entity
+- several connected entities
+- subtle blue connection lines
+- soft node glow
+- readable labels
+- balanced spacing
+- no overlapping nodes
 
-C. Smart Automations
-- Highlight the Smart Automations card.
-- Display a floating workflow recommendation such as:
-  "Recommend escalating enterprise accounts with elevated churn risk."
-- Include a small workflow visualization or automation badge.
-- Hold briefly.
-- Fade away.
-- Mark completed.
+The graph should immediately read as a complete visualization instead of a tiny preview.
 
-6. Final State
-When the sequence finishes:
-- All three output cards remain completed.
-- Connector lines retain a subtle illuminated state.
-- The AI Core returns to its calm idle animation.
-- The section should feel alive but not distracting.
-
-Animation Principles
-- Slow, deliberate, enterprise-grade motion.
-- No bouncing.
-- No glitch effects.
-- No exaggerated scaling.
-- No flashy sci-fi effects.
-- Prioritize clarity over spectacle.
-
-Performance
-- Animate only transform and opacity where possible.
-- Use GSAP timelines efficiently.
-- Respect prefers-reduced-motion.
-- Clean up all ScrollTriggers correctly.
-- Keep animations smooth on desktop and mobile.
-
-Validation
-- Run npm run lint.
-- Run npm run build.
-- Ensure no layout regressions occur.
-- Verify the final static appearance remains identical to the approved design.
-
-At completion, provide:
-- files modified;
-- animation timeline summary;
-- performance considerations;
-- reduced-motion behavior;
-- lint result;
-- build result.
+After implementation:
+- verify the graph fills the canvas;
+- verify it remains responsive;
+- run lint;
+- run build;
+- stop after this fix.

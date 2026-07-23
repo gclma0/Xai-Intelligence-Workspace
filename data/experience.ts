@@ -17,6 +17,24 @@ export const pipelineStages = ["Ingest Data", "Analyze with AI", "Generate Insig
 
 export const pipelineOutputs = ["Knowledge Graph", "Real-time Insights", "Smart Automations"];
 
+export const pipelineOutputDetails = [
+  {
+    label: "Knowledge Graph",
+    status: "Entity Map",
+    summary: "Customer, product, and support signals linked into a verified relationship graph."
+  },
+  {
+    label: "Real-time Insights",
+    status: "96% Confidence",
+    summary: "Premium accounts with integration errors show elevated churn risk this week."
+  },
+  {
+    label: "Smart Automations",
+    status: "Workflow Ready",
+    summary: "Recommend escalating enterprise accounts with elevated churn risk."
+  }
+];
+
 export const dashboardNav = [
   { label: "Overview", href: "#intelligence-dashboard", icon: LayoutDashboard },
   { label: "Data Sources", href: "#neural-pipeline", icon: Database },

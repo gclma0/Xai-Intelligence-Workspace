@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Knowledge Graph Popup</title>
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body {
+    background: #050810;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+
+  .popup {
+    width: 260px;
+    background: linear-gradient(180deg, rgba(15,22,48,0.95), rgba(8,12,28,0.95));
+    border: 1px solid rgba(90,140,255,0.4);
+    border-radius: 10px;
+    box-shadow: 0 0 40px rgba(40,90,220,0.35);
+    padding: 14px;
+  }
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #a9bce0;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .popup-close {
+    color: #7d8bb0;
+    font-size: 13px;
+    cursor: default;
+  }
+  .popup-canvas {
+    width: 100%;
+    height: 150px;
+    position: relative;
+  }
+  .node {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    background: #6fa2ff;
+    border-radius: 50%;
+    box-shadow: 0 0 6px 2px rgba(111,162,255,0.7);
+  }
+  .node.center {
+    width: 12px;
+    height: 12px;
+    background: #ffffff;
+    box-shadow: 0 0 12px 4px rgba(255,255,255,0.8);
+  }
+  .popup-canvas svg { position: absolute; top:0; left:0; }
+</style>
+</head>
+<body>
+
+<div class="popup">
+  <div class="popup-header">
+    <span>KNOWLEDGE GRAPH</span>
+    <span class="popup-close">✕</span>
+  </div>
+  <div class="popup-canvas">
+    <svg width="100%" height="150" viewBox="0 0 232 150">
+      <g stroke="#4d6bb0" stroke-width="1" opacity="0.6">
+        <line x1="116" y1="75" x2="30" y2="20"/>
+        <line x1="116" y1="75" x2="70" y2="15"/>
+        <line x1="116" y1="75" x2="180" y2="20"/>
+        <line x1="116" y1="75" x2="210" y2="55"/>
+        <line x1="116" y1="75" x2="200" y2="110"/>
+        <line x1="116" y1="75" x2="150" y2="130"/>
+        <line x1="116" y1="75" x2="70" y2="130"/>
+        <line x1="116" y1="75" x2="20" y2="110"/>
+        <line x1="116" y1="75" x2="15" y2="60"/>
+        <line x1="30" y1="20" x2="70" y2="15"/>
+        <line x1="180" y1="20" x2="210" y2="55"/>
+        <line x1="200" y1="110" x2="150" y2="130"/>
+        <line x1="70" y1="130" x2="20" y2="110"/>
+      </g>
+    </svg>
+    <div class="node center" style="top:69px; left:110px;"></div>
+    <div class="node" style="top:14px; left:24px;"></div>
+    <div class="node" style="top:9px; left:64px;"></div>
+    <div class="node" style="top:14px; left:174px;"></div>
+    <div class="node" style="top:49px; left:204px;"></div>
+    <div class="node" style="top:104px; left:194px;"></div>
+    <div class="node" style="top:124px; left:144px;"></div>
+    <div class="node" style="top:124px; left:64px;"></div>
+    <div class="node" style="top:104px; left:14px;"></div>
+    <div class="node" style="top:54px; left:9px;"></div>
+  </div>
+</div>
+
+</body>
+</html>
