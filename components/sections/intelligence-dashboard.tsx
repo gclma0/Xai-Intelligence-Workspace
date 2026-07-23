@@ -43,16 +43,17 @@ export function IntelligenceDashboard() {
                   const isActive = index === 0;
 
                   return (
-                    <button
+                    <a
                       key={item.label}
-                      type="button"
                       className={`focus-ring flex shrink-0 items-center gap-3 rounded px-4 py-3 text-left text-sm transition-colors hover:bg-[var(--surface-2)] lg:w-full ${
                         isActive ? "border-l-2 border-[var(--primary)] bg-[var(--surface-2)] text-[var(--primary)]" : "text-[var(--text-soft)]"
                       }`}
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
                     >
                       <Icon className="h-4 w-4" aria-hidden="true" />
                       {item.label}
-                    </button>
+                    </a>
                   );
                 })}
               </nav>

@@ -4,7 +4,7 @@ export const navItems = [
   { label: "Product", href: "#top" },
   { label: "Intelligence", href: "#intelligence-dashboard" },
   { label: "Automations", href: "#automation-builder" },
-  { label: "Resources", href: "#" }
+  { label: "Resources", href: "#site-footer" }
 ];
 
 export const pipelineSources = [
@@ -16,11 +16,11 @@ export const pipelineSources = [
 export const pipelineOutputs = ["Knowledge Graph", "Real-time Insights", "Smart Automations"];
 
 export const dashboardNav = [
-  { label: "Overview", icon: LayoutDashboard },
-  { label: "Data Sources", icon: Database },
-  { label: "Intelligence", icon: BrainCircuit },
-  { label: "Reports", icon: FileText },
-  { label: "Automations", icon: Workflow }
+  { label: "Overview", href: "#intelligence-dashboard", icon: LayoutDashboard },
+  { label: "Data Sources", href: "#neural-pipeline", icon: Database },
+  { label: "Intelligence", href: "#reasoning-engine", icon: BrainCircuit },
+  { label: "Reports", href: "#intelligence-dashboard", icon: FileText },
+  { label: "Automations", href: "#automation-builder", icon: Workflow }
 ];
 
 export const dashboardFindings = [
@@ -63,12 +63,6 @@ export const reasoningHighlights = [
 export const reasoningRecommendation =
   "Escalate to Priority Support and trigger automatic service credit for Node US West outage. Send personalized apology via CSM.";
 
-export const heroStats = [
-  { label: "Connected sources", value: "128" },
-  { label: "Signals processed", value: "4.8M" },
-  { label: "Automation latency", value: "82ms" }
-];
-
 export const heroTrustIndicators = ["NOVA", "AXIS", "VERTEX"];
 
 export const heroCapabilities = [
@@ -93,4 +87,9 @@ export const automationSteps = [
   { label: "Outcome", value: "Notify Slack", icon: CheckCircle }
 ];
 
-export const footerLinks = ["Privacy", "Terms", "Security", "Contact"];
+export const footerLinks = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Security", href: "#reasoning-engine" },
+  { label: "Contact", href: "mailto:hello@xai.example" }
+];

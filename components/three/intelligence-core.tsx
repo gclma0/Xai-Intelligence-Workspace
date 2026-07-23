@@ -53,11 +53,17 @@ export function IntelligenceCore() {
   }, []);
 
   return (
-    <Canvas camera={{ position: [0, 0, 5], fov: 46 }} dpr={[1, 1.8]}>
+    <Canvas
+      aria-hidden="true"
+      camera={{ position: [0, 0, 5], fov: 46 }}
+      dpr={[1, 1.5]}
+      frameloop={prefersReducedMotion ? "demand" : "always"}
+      gl={{ antialias: true, powerPreference: "high-performance" }}
+    >
       <ambientLight intensity={1.2} />
       <directionalLight position={[3, 4, 4]} intensity={2.2} />
       <DataLattice prefersReducedMotion={prefersReducedMotion} />
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate={!prefersReducedMotion} autoRotateSpeed={0.6} />
+      <OrbitControls enableZoom={false} enablePan={false} enableDamping={!prefersReducedMotion} autoRotate={!prefersReducedMotion} autoRotateSpeed={0.6} />
     </Canvas>
   );
 }

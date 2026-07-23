@@ -33,7 +33,7 @@ export function AutomationBuilder() {
           <p className="mt-4 text-sm text-[var(--text-soft)]">Build complex reasoning chains with zero friction.</p>
         </motion.div>
 
-        <div className="flex flex-col items-stretch justify-center gap-6 md:flex-row md:items-center">
+        <div className="flex flex-col items-stretch justify-center gap-6 md:flex-row md:items-center" role="list" aria-label="Automation workflow">
           {automationSteps.map((step, index) => {
             const Icon = step.icon;
             const isAiNode = step.label === "AI Analysis";
@@ -41,7 +41,7 @@ export function AutomationBuilder() {
             const isActive = index === activeStep;
 
             return (
-              <div key={step.label} className="flex flex-col items-center gap-6 md:flex-row">
+              <div key={step.label} className="flex flex-col items-center gap-6 md:flex-row" role="listitem">
                 <motion.article
                   className={`relative w-full min-w-[180px] rounded-lg border p-6 text-center transition-colors md:w-auto ${
                     isAiNode
@@ -58,6 +58,7 @@ export function AutomationBuilder() {
                   whileHover={{ borderColor: "var(--primary)" }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ duration: 0.35, delay: index * 0.08, ease: "easeOut" }}
+                  aria-current={isActive ? "step" : undefined}
                 >
                   {isAiNode ? (
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[var(--primary)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-white">

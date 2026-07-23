@@ -107,7 +107,7 @@ export function HeroSection() {
                 }`}
                 onClick={() => setActiveCapability(index)}
                 aria-pressed={isActive}
-                animate={isActive && !shouldReduceMotion ? { x: 0 } : { x: 0 }}
+                aria-label={`${capability.title} ${isActive ? "Selected" : "Show capability"}`}
                 transition={{ duration: 0.25, ease: "easeOut" }}
               >
                 <span
