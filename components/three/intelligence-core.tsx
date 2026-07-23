@@ -2,10 +2,10 @@
 
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Group } from "three";
 
-function DataLattice() {
+function DataLattice({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
   const core = useRef<Group>(null);
   const nodes = useMemo(
     () =>
@@ -18,7 +18,7 @@ function DataLattice() {
   );
 
   useFrame(({ clock, pointer }) => {
-    if (!core.current) return;
+    if (!core.current || prefersReducedMotion) return;
     core.current.rotation.x = clock.elapsedTime * 0.35 + pointer.y * 0.4;
     core.current.rotation.y = clock.elapsedTime * 0.28 + pointer.x * 0.7;
   });
@@ -40,12 +40,24 @@ function DataLattice() {
 }
 
 export function IntelligenceCore() {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
+
+    updatePreference();
+    mediaQuery.addEventListener("change", updatePreference);
+
+    return () => mediaQuery.removeEventListener("change", updatePreference);
+  }, []);
+
   return (
     <Canvas camera={{ position: [0, 0, 5], fov: 46 }} dpr={[1, 1.8]}>
       <ambientLight intensity={1.2} />
       <directionalLight position={[3, 4, 4]} intensity={2.2} />
-      <DataLattice />
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.6} />
+      <DataLattice prefersReducedMotion={prefersReducedMotion} />
+      <OrbitControls enableZoom={false} enablePan={false} autoRotate={!prefersReducedMotion} autoRotateSpeed={0.6} />
     </Canvas>
   );
 }
