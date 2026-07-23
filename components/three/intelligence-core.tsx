@@ -1,69 +1,39 @@
-"use client";
-
-import { OrbitControls } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { Group } from "three";
-
-function DataLattice({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
-  const core = useRef<Group>(null);
-  const nodes = useMemo(
-    () =>
-      Array.from({ length: 32 }, (_, index) => {
-        const angle = (index / 32) * Math.PI * 2;
-        const radius = 1.4 + (index % 4) * 0.18;
-        return [Math.cos(angle) * radius, Math.sin(index) * 0.55, Math.sin(angle) * radius] as const;
-      }),
-    []
-  );
-
-  useFrame(({ clock, pointer }) => {
-    if (!core.current || prefersReducedMotion) return;
-    core.current.rotation.x = clock.elapsedTime * 0.35 + pointer.y * 0.4;
-    core.current.rotation.y = clock.elapsedTime * 0.28 + pointer.x * 0.7;
-  });
-
-  return (
-    <group ref={core}>
-      <mesh>
-        <icosahedronGeometry args={[0.85, 2]} />
-        <meshStandardMaterial color="#0070f3" wireframe emissive="#004397" emissiveIntensity={0.5} />
-      </mesh>
-      {nodes.map((position, index) => (
-        <mesh key={index} position={position}>
-          <boxGeometry args={[0.08, 0.08, 0.08]} />
-          <meshStandardMaterial color={index % 3 === 0 ? "#ffffff" : "#0070f3"} emissive="#0070f3" emissiveIntensity={0.4} />
-        </mesh>
-      ))}
-    </group>
-  );
-}
+import { BrainCircuit } from "lucide-react";
 
 export function IntelligenceCore() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updatePreference = () => setPrefersReducedMotion(mediaQuery.matches);
-
-    updatePreference();
-    mediaQuery.addEventListener("change", updatePreference);
-
-    return () => mediaQuery.removeEventListener("change", updatePreference);
-  }, []);
-
   return (
-    <Canvas
-      aria-hidden="true"
-      camera={{ position: [0, 0, 5], fov: 46 }}
-      dpr={[1, 1.5]}
-      frameloop={prefersReducedMotion ? "demand" : "always"}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
-    >
-      <ambientLight intensity={1.2} />
-      <directionalLight position={[3, 4, 4]} intensity={2.2} />
-      <DataLattice prefersReducedMotion={prefersReducedMotion} />
-      <OrbitControls enableZoom={false} enablePan={false} enableDamping={!prefersReducedMotion} autoRotate={!prefersReducedMotion} autoRotateSpeed={0.6} />
-    </Canvas>
+    <div className="intelligence-core" aria-hidden="true">
+      <div className="intelligence-core__glow" />
+      <div className="ai-core-ring ai-core-ring--1" />
+      <div className="ai-core-ring ai-core-ring--2" />
+      <div className="ai-core-ring ai-core-ring--3" />
+      <div className="ai-core-ring ai-core-ring--4" />
+      <div className="ai-core-ring ai-core-ring--5" />
+
+      <div className="intelligence-core__center">
+        <div className="intelligence-core__diamond">
+          <BrainCircuit />
+        </div>
+
+        <span className="data-block data-block--1" />
+        <span className="data-block data-block--2" />
+        <span className="data-block data-block--3" />
+        <span className="data-block data-block--4" />
+        <span className="data-block data-block--5" />
+
+        <svg className="intelligence-core__lines" viewBox="0 0 200 200">
+          <line stroke="#0070f3" strokeWidth="0.5" x1="100" x2="160" y1="100" y2="40" />
+          <line stroke="#0070f3" strokeWidth="0.5" x1="100" x2="40" y1="100" y2="100" />
+          <line stroke="#0070f3" strokeWidth="0.5" x1="100" x2="140" y1="100" y2="160" />
+          <line stroke="#0070f3" strokeOpacity="0.4" strokeWidth="0.3" x1="160" x2="40" y1="40" y2="100" />
+          <line stroke="#0070f3" strokeOpacity="0.4" strokeWidth="0.3" x1="40" x2="140" y1="100" y2="160" />
+          <circle cx="160" cy="40" r="2" fill="#0070f3" />
+          <circle cx="40" cy="100" r="2" fill="#0070f3" />
+          <circle cx="140" cy="160" r="2" fill="#0070f3" />
+          <circle cx="100" cy="20" r="1.5" fill="#0070f3" fillOpacity="0.6" />
+          <circle cx="180" cy="100" r="1.5" fill="#0070f3" fillOpacity="0.6" />
+        </svg>
+      </div>
+    </div>
   );
 }
