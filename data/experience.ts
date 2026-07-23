@@ -88,8 +88,8 @@ export const automationSteps = [
 ];
 
 export const footerLinks = [
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
+  { label: "Privacy", href: "mailto:privacy@xai.example" },
+  { label: "Terms", href: "mailto:legal@xai.example" },
   { label: "Security", href: "#reasoning-engine" },
   { label: "Contact", href: "mailto:hello@xai.example" }
 ];
