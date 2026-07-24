@@ -1,132 +1,174 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Lightbulb } from "lucide-react";
-import { useEffect, useState } from "react";
-import { heroCapabilities, heroTrustIndicators } from "@/data/experience";
+import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import type { MutableRefObject } from "react";
 
 function IntelligenceCoreFallback() {
   return (
-    <div className="intelligence-core" aria-hidden="true">
+    <div className="intelligence-core intelligence-core--hero" aria-hidden="true">
       <div className="intelligence-core__fallback">
-        <div className="intelligence-core__glow" />
-        <div className="ai-core-ring ai-core-ring--1" />
-        <div className="ai-core-ring ai-core-ring--2" />
-        <div className="ai-core-ring ai-core-ring--3" />
-        <div className="ai-core-ring ai-core-ring--4" />
-        <div className="ai-core-ring ai-core-ring--5" />
-        <div className="intelligence-core__center">
-          <div className="intelligence-core__diamond">
-            <Lightbulb />
-          </div>
-          <span className="data-block data-block--1" />
-          <span className="data-block data-block--2" />
-          <span className="data-block data-block--3" />
-          <span className="data-block data-block--4" />
-          <span className="data-block data-block--5" />
+        <div className="intelligence-core__fallback-lattice">
+          {Array.from({ length: 64 }, (_, index) => (
+            <span key={index} />
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-const IntelligenceCore = dynamic(() => import("@/components/three/intelligence-core").then((mod) => mod.IntelligenceCore), {
+const IntelligenceCore = dynamic<{ progressRef: MutableRefObject<number> }>(() => import("@/components/three/intelligence-core").then((mod) => mod.IntelligenceCore), {
   ssr: false,
   loading: () => <IntelligenceCoreFallback />
 });
 
+const stages = ["RAW DATA", "STRUCTURE", "INSIGHT", "AUTOMATION"];
+
+function formatUtcTime() {
+  return `${new Date().toUTCString().split(" ")[4]} UTC`;
+}
+
 export function HeroSection() {
-  const [activeCapability, setActiveCapability] = useState(0);
+  const heroRef = useRef<HTMLElement>(null);
+  const targetProgressRef = useRef(0);
+  const progressRef = useRef(0);
   const shouldReduceMotion = useReducedMotion();
-  const activeHeroCapability = heroCapabilities[activeCapability];
+  const [activeStage, setActiveStage] = useState(0);
+  const [clock, setClock] = useState("00:00:00 UTC");
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
-
-    const timer = window.setInterval(() => {
-      setActiveCapability((current) => (current + 1) % heroCapabilities.length);
-    }, 2600);
+    setClock(formatUtcTime());
+    const timer = window.setInterval(() => setClock(formatUtcTime()), 1000);
 
     return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    let animationFrame = 0;
+    let lastTime = performance.now();
+
+    function updateProgress() {
+      frame = 0;
+
+      if (!heroRef.current) return;
+
+      const rect = heroRef.current.getBoundingClientRect();
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, -rect.top / scrollable));
+
+      targetProgressRef.current = shouldReduceMotion ? 0.72 : Math.min(1, progress / 0.86);
+    }
+
+    function requestUpdate() {
+      if (frame) return;
+      frame = window.requestAnimationFrame(updateProgress);
+    }
+
+    function animateProgress(now: number) {
+      const delta = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      const damping = shouldReduceMotion ? 1 : 1 - Math.exp(-delta * 5.2);
+
+      progressRef.current += (targetProgressRef.current - progressRef.current) * damping;
+
+      const roundedProgress = Math.round(progressRef.current * 1000) / 1000;
+      setScrollProgress((current) => (Math.abs(current - roundedProgress) > 0.004 ? roundedProgress : current));
+      setActiveStage(Math.min(stages.length - 1, Math.floor(progressRef.current * stages.length)));
+      animationFrame = window.requestAnimationFrame(animateProgress);
+    }
+
+    updateProgress();
+    animationFrame = window.requestAnimationFrame(animateProgress);
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+    };
   }, [shouldReduceMotion]);
 
   return (
-    <section id="top" className="page-shell hero-section">
-      <div className="hero-grid">
-        <motion.div
-          className="hero-copy"
-          initial={shouldReduceMotion ? false : "hidden"}
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.11 } }
-          }}
-        >
-          <motion.p className="hero-copy__brand" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.45 }}>
-            Xai
-          </motion.p>
-          <motion.h1 variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.55 }}>
-            Intelligence <br />
-            Workspace
-          </motion.h1>
-          <motion.p className="hero-copy__text" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.5 }}>
-            Connect enterprise data, uncover meaningful intelligence and automate better decisions from one intelligent workspace.
-          </motion.p>
+    <>
+      <section id="top" className="hero-scroll-section" ref={heroRef}>
+        <div className="hero-ambient" aria-hidden="true">
+          <IntelligenceCore progressRef={progressRef} />
+        </div>
+        <div className="hero-vignette" aria-hidden="true" />
+        <div className="hero-noise" aria-hidden="true" />
 
-          <motion.div className="hero-actions" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.5 }}>
-            <a className="button-primary focus-ring" href="#intelligence-dashboard">
-              Explore Workspace
-            </a>
-            <a className="button-secondary focus-ring" href="#neural-pipeline">
-              See How It Works
-            </a>
-          </motion.div>
+        <div className="hero-system-nav" aria-hidden="true">
+          <div className="hero-system-nav__mark">AI CORE</div>
+          <div className="hero-system-nav__clock">{clock}</div>
+        </div>
 
-          <motion.div className="hero-trust" variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.5 }}>
-            <p>Trusted by enterprise teams worldwide</p>
-            <div className="hero-logos" aria-label="Trusted teams">
-              {heroTrustIndicators.map((indicator) => (
-                <span key={indicator} className="hero-logo" aria-label={indicator} />
-              ))}
+        <aside className="hero-stage-rail" aria-label="AI core stages">
+          {stages.map((stage, index) => (
+            <div key={stage} className={`hero-stage-rail__stage ${index === activeStage ? "is-active" : ""}`}>
+              <span className="hero-stage-rail__num">{String(index + 1).padStart(2, "0")}</span>
+              <span className="hero-stage-rail__bar" aria-hidden="true" />
+              <span>{stage}</span>
             </div>
+          ))}
+        </aside>
+
+        <div className="hero-pin">
+          <motion.p className="hero-scroll-eyebrow" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.15 }}>
+            <span className="hero-scroll-eyebrow__rule" aria-hidden="true" />
+            SYSTEM ONLINE - INGESTING SIGNAL
+          </motion.p>
+
+          <motion.h1 className="hero-scroll-headline" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.01, delay: 0.3 }}>
+            <span className="hero-scroll-headline__row">
+              <motion.span initial={shouldReduceMotion ? false : { y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}>
+                Every stray
+              </motion.span>
+            </span>
+            <span className="hero-scroll-headline__row">
+              <motion.span initial={shouldReduceMotion ? false : { y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}>
+                signal becomes <span className="hero-scroll-headline__accent">a system.</span>
+              </motion.span>
+            </span>
+          </motion.h1>
+
+          <motion.p className="hero-scroll-subtext" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: scrollProgress > 0.7 ? 0 : 1 }} transition={{ duration: 0.8, delay: 0.85 }}>
+            Raw data enters as noise. The core resolves it into structure, structure into insight, and insight into automations that act on their own.
+          </motion.p>
+
+          <motion.div className="hero-scroll-cue" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.1 }} aria-hidden="true">
+            <span>SCROLL TO RESOLVE</span>
+            <span className="hero-scroll-cue__track" />
           </motion.div>
-        </motion.div>
 
-        <motion.div className="hero-core" aria-label="AI core visualization" initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.75, delay: 0.25 }}>
-          <div className="hero-core__frame">
-            <IntelligenceCore />
-          </div>
-        </motion.div>
+          <motion.div className="hero-panel-tag hero-panel-tag--left" initial={false} animate={{ opacity: scrollProgress > 0.2 ? 1 : 0, y: scrollProgress > 0.2 ? -8 : 0 }}>
+            <span className="hero-panel-tag__dot" />
+            node.cluster_04
+          </motion.div>
+          <motion.div className="hero-panel-tag hero-panel-tag--right-low" initial={false} animate={{ opacity: scrollProgress > 0.3 ? 1 : 0, y: scrollProgress > 0.3 ? -8 : 0 }}>
+            <span className="hero-panel-tag__dot" />
+            throughput: 12.4k/s
+          </motion.div>
+          <motion.div className="hero-panel-tag hero-panel-tag--right-high" initial={false} animate={{ opacity: scrollProgress > 0.45 ? 1 : 0, y: scrollProgress > 0.45 ? -8 : 0 }}>
+            <span className="hero-panel-tag__dot" />
+            schema: resolved
+          </motion.div>
+        </div>
+      </section>
 
-        <motion.aside
-          className="hero-capabilities"
-          aria-label="Xai capabilities"
-          initial={shouldReduceMotion ? false : "hidden"}
-          animate="visible"
-          variants={{
-            hidden: {},
-            visible: { transition: { delayChildren: 0.55, staggerChildren: 0.38 } }
-          }}
-        >
-          <div className="hero-capabilities__list">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeHeroCapability.title}
-                className="hero-capability hero-capability--single is-active"
-                aria-live="polite"
-                initial={shouldReduceMotion ? false : { opacity: 0, x: 28, filter: "blur(6px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                exit={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, x: -18, filter: "blur(4px)" }}
-                transition={{ duration: 0.58, ease: "easeOut" }}
-              >
-                <span className="hero-capability__dot" aria-hidden="true" />
-                <span className="hero-capability__title">{activeHeroCapability.title}</span>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </motion.aside>
-      </div>
-    </section>
+      <section className="hero-next-section" aria-label="What the core does next">
+        <div className="hero-next-section__inner">
+          <p className="hero-next-section__kicker">{String.raw`// WHAT THE CORE DOES NEXT`}</p>
+          <h2>
+            Once structured, the same lattice <strong>surfaces the signals worth acting on</strong> and hands them to automations that run without waiting for a human in the loop.
+          </h2>
+        </div>
+      </section>
+    </>
   );
 }

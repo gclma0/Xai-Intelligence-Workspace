@@ -1,215 +1,229 @@
 "use client";
 
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Edges, Line, Sparkles } from "@react-three/drei";
 import { useReducedMotion } from "framer-motion";
-import { Suspense, useMemo, useRef } from "react";
-import type { MutableRefObject, PointerEvent } from "react";
-import type { Group } from "three";
-import { AdditiveBlending, MathUtils, Vector3 } from "three";
+import { Component, Suspense, useMemo, useRef } from "react";
+import type { MutableRefObject, ReactNode } from "react";
+import type { BufferAttribute, Group, Points } from "three";
+import { AdditiveBlending, BufferGeometry, Color, Float32BufferAttribute, IcosahedronGeometry, LineBasicMaterial, LineSegments, MathUtils, Mesh, MeshBasicMaterial } from "three";
 
-type CorePointer = {
-  x: number;
-  y: number;
+type IntelligenceCoreProps = {
+  progressRef?: MutableRefObject<number>;
 };
 
-type RingId = "a" | "b" | "c";
-
-type RingConfig = {
-  id: RingId;
-  radius: number;
-  tilt: [number, number, number];
-  speed: number;
-  opacity: number;
-  color: string;
+type BoundaryProps = {
+  children: ReactNode;
+  fallback: ReactNode;
 };
 
-type NodeConfig = {
-  id: number;
-  ring: RingId;
-  angle: number;
-  size: number;
-  opacity: number;
+type BoundaryState = {
+  hasError: boolean;
 };
 
-const rings: RingConfig[] = [
-  { id: "a", radius: 1, tilt: [0, 0, 0], speed: 0.11, opacity: 0.34, color: "#3aa0ff" },
-  { id: "b", radius: 1.25, tilt: [MathUtils.degToRad(60), MathUtils.degToRad(-25), 0], speed: -0.15, opacity: 0.28, color: "#0070f3" },
-  { id: "c", radius: 0.72, tilt: [MathUtils.degToRad(82), MathUtils.degToRad(12), MathUtils.degToRad(10)], speed: 0.09, opacity: 0.22, color: "#9ecbff" }
-];
+const POINT_COUNT = 2600;
+const GRID_X = 20;
+const GRID_Y = 13;
+const GRID_Z = 5;
 
-const nodes: NodeConfig[] = [
-  { id: 1, ring: "b", angle: -90, size: 0.1, opacity: 0.88 },
-  { id: 2, ring: "a", angle: 30, size: 0.1, opacity: 0.9 },
-  { id: 3, ring: "b", angle: 150, size: 0.1, opacity: 0.86 },
-  { id: 4, ring: "c", angle: 90, size: 0.095, opacity: 0.78 },
-  { id: 5, ring: "a", angle: 210, size: 0.1, opacity: 0.88 },
-  { id: 6, ring: "c", angle: -30, size: 0.095, opacity: 0.76 }
-];
+function seededRandom(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
 
-function polarPoint(radius: number, angle: number): [number, number, number] {
-  const radians = MathUtils.degToRad(angle);
-  return [Math.cos(radians) * radius, Math.sin(radians) * radius, 0];
+  return value - Math.floor(value);
 }
 
-function StaticCore({ hidden = false }: { hidden?: boolean }) {
+function randomSpherePoint(index: number, radius: number) {
+  const u = seededRandom(index + 1);
+  const v = seededRandom(index + 97);
+  const theta = 2 * Math.PI * u;
+  const phi = Math.acos(2 * v - 1);
+  const r = radius * Math.cbrt(seededRandom(index + 311) * 0.6 + 0.4);
+
+  return [r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi)] as const;
+}
+
+function buildGridPoints() {
+  const points: number[][] = [];
+
+  for (let z = 0; z < GRID_Z; z += 1) {
+    for (let y = 0; y < GRID_Y; y += 1) {
+      for (let x = 0; x < GRID_X; x += 1) {
+        points.push([(x / (GRID_X - 1) - 0.5) * 8.6, (y / (GRID_Y - 1) - 0.5) * 5.2, (z / (GRID_Z - 1) - 0.5) * 2.7]);
+      }
+    }
+  }
+
+  return points;
+}
+
+function buildSceneData() {
+  const chaotic = new Float32Array(POINT_COUNT * 3);
+  const structured = new Float32Array(POINT_COUNT * 3);
+  const colors = new Float32Array(POINT_COUNT * 3);
+  const cold = new Color("#0070f3");
+  const hot = new Color("#aec6ff");
+  const lineGrid = buildGridPoints();
+  const grid = [...lineGrid].sort((a, b) => seededRandom(a[0] * 13 + a[1] * 17 + a[2] * 19) - seededRandom(b[0] * 13 + b[1] * 17 + b[2] * 19));
+
+  for (let index = 0; index < POINT_COUNT; index += 1) {
+    const chaos = randomSpherePoint(index, 4.1);
+    const structuredPoint = grid[index % grid.length];
+    const pointIndex = index * 3;
+
+    chaotic[pointIndex] = chaos[0];
+    chaotic[pointIndex + 1] = chaos[1];
+    chaotic[pointIndex + 2] = chaos[2];
+
+    structured[pointIndex] = structuredPoint[0] + (seededRandom(index + 701) - 0.5) * 0.018;
+    structured[pointIndex + 1] = structuredPoint[1] + (seededRandom(index + 809) - 0.5) * 0.018;
+    structured[pointIndex + 2] = structuredPoint[2] + (seededRandom(index + 907) - 0.5) * 0.018;
+
+    const color = cold.clone().lerp(hot, seededRandom(index + 43) * 0.28);
+    color.toArray(colors, pointIndex);
+  }
+
+  return { chaotic, structured, colors, lineGrid };
+}
+
+function buildLineGeometry(grid: number[][]) {
+  const linePositions: number[] = [];
+  const layerSize = GRID_X * GRID_Y;
+
+  for (let z = 0; z < GRID_Z; z += 1) {
+    for (let y = 0; y < GRID_Y; y += 1) {
+      for (let x = 0; x < GRID_X - 1; x += 1) {
+        const start = grid[z * layerSize + y * GRID_X + x];
+        const end = grid[z * layerSize + y * GRID_X + x + 1];
+
+        linePositions.push(...start, ...end);
+      }
+    }
+  }
+
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(linePositions, 3));
+
+  return geometry;
+}
+
+class CoreBoundary extends Component<BoundaryProps, BoundaryState> {
+  state: BoundaryState = { hasError: false };
+
+  static getDerivedStateFromError(): BoundaryState {
+    return { hasError: true };
+  }
+
+  render() {
+    return this.state.hasError ? this.props.fallback : this.props.children;
+  }
+}
+
+function StaticCore() {
   return (
-    <div className={`intelligence-core__fallback ${hidden ? "is-hidden" : ""}`} aria-hidden="true">
-      <div className="intelligence-core__glow" />
+    <div className="intelligence-core__fallback" aria-hidden="true">
+      <div className="intelligence-core__fallback-lattice">
+        {Array.from({ length: 64 }, (_, index) => (
+          <span key={index} />
+        ))}
+      </div>
     </div>
   );
 }
 
-function CoreNode({ config }: { config: NodeConfig }) {
-  const ring = rings.find((item) => item.id === config.ring);
-  const position = ring ? polarPoint(ring.radius, config.angle) : ([0, 0, 0] satisfies [number, number, number]);
+function ParticleLattice({ progressRef, shouldReduceMotion }: { progressRef: MutableRefObject<number>; shouldReduceMotion: boolean | null }) {
+  const pointsRef = useRef<Points>(null);
+  const groupRef = useRef<Group>(null);
+  const lineRef = useRef<LineSegments>(null);
+  const coreRef = useRef<Mesh>(null);
+  const morphRef = useRef(shouldReduceMotion ? 0.72 : 0);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const data = useMemo(buildSceneData, []);
+  const geometry = useMemo(() => {
+    const pointGeometry = new BufferGeometry();
+    pointGeometry.setAttribute("position", new Float32BufferAttribute(data.chaotic.slice(), 3));
+    pointGeometry.setAttribute("color", new Float32BufferAttribute(data.colors.slice(), 3));
 
-  return (
-    <group position={position} rotation={[MathUtils.degToRad(25), MathUtils.degToRad(35), MathUtils.degToRad(45)]}>
-      <mesh>
-        <boxGeometry args={[config.size, config.size, config.size]} />
-        <meshPhysicalMaterial color="#0d7cff" emissive="#0070f3" emissiveIntensity={0.85} roughness={0.18} metalness={0.18} clearcoat={0.8} clearcoatRoughness={0.22} transparent opacity={config.opacity} />
-        <Edges color="#b8dcff" threshold={10} />
-      </mesh>
-      <mesh scale={1.9}>
-        <boxGeometry args={[config.size, config.size, config.size]} />
-        <meshBasicMaterial color="#0070f3" transparent opacity={0.12} blending={AdditiveBlending} depthWrite={false} />
-      </mesh>
-    </group>
-  );
-}
+    return pointGeometry;
+  }, [data]);
+  const lineGeometry = useMemo(() => buildLineGeometry(data.lineGrid), [data.lineGrid]);
+  const lines = useMemo(() => new LineSegments(lineGeometry, new LineBasicMaterial({ color: "#aec6ff", transparent: true, opacity: 0 })), [lineGeometry]);
+  const core = useMemo(() => new Mesh(new IcosahedronGeometry(1.05, 1), new MeshBasicMaterial({ color: "#414754", wireframe: true, transparent: true, opacity: 0.32 })), []);
 
-function OrbitalSystem({ ring, children }: { ring: RingConfig; children?: React.ReactNode }) {
-  const orbitRef = useRef<Group>(null);
-  const shouldReduceMotion = useReducedMotion();
+  useFrame(({ clock, pointer }, delta) => {
+    const elapsed = clock.getElapsedTime();
+    const targetProgress = shouldReduceMotion ? 0.72 : progressRef.current;
+    morphRef.current = MathUtils.damp(morphRef.current, targetProgress, shouldReduceMotion ? 100 : 5.8, delta);
+    pointerRef.current.x = MathUtils.damp(pointerRef.current.x, pointer.x, 7.2, delta);
+    pointerRef.current.y = MathUtils.damp(pointerRef.current.y, pointer.y, 7.2, delta);
 
-  useFrame(({ clock }) => {
-    if (!orbitRef.current || shouldReduceMotion) return;
-    orbitRef.current.rotation.z = clock.elapsedTime * ring.speed;
+    const morph = morphRef.current;
+    const position = geometry.getAttribute("position") as BufferAttribute;
+    const color = geometry.getAttribute("color") as BufferAttribute;
+    const positionArray = position.array as Float32Array;
+    const colorArray = color.array as Float32Array;
+
+    for (let index = 0; index < POINT_COUNT; index += 1) {
+      const pointIndex = index * 3;
+      const resolveDelay = seededRandom(index + 501) * 0.08 * (1 - morph);
+      const localMorph = MathUtils.smoothstep(MathUtils.clamp((morph - resolveDelay) / 0.9, 0, 1), 0, 1);
+
+      positionArray[pointIndex] = MathUtils.lerp(data.chaotic[pointIndex], data.structured[pointIndex], localMorph);
+      positionArray[pointIndex + 1] = MathUtils.lerp(data.chaotic[pointIndex + 1], data.structured[pointIndex + 1], localMorph);
+      positionArray[pointIndex + 2] = MathUtils.lerp(data.chaotic[pointIndex + 2], data.structured[pointIndex + 2], localMorph);
+
+      colorArray[pointIndex] = MathUtils.lerp(0.0, 0.68, localMorph);
+      colorArray[pointIndex + 1] = MathUtils.lerp(0.44, 0.78, localMorph);
+      colorArray[pointIndex + 2] = MathUtils.lerp(0.95, 1, localMorph);
+    }
+
+    position.needsUpdate = true;
+    color.needsUpdate = true;
+
+    if (groupRef.current) {
+      const pointerInfluence = 1 - morph * 0.12;
+      groupRef.current.rotation.y = (shouldReduceMotion ? 0 : elapsed * 0.018) + pointerRef.current.x * 0.35 * pointerInfluence;
+      groupRef.current.rotation.x = pointerRef.current.y * -0.22 * pointerInfluence;
+      groupRef.current.position.y = MathUtils.damp(groupRef.current.position.y, -morph * 0.28, 5.2, delta);
+      groupRef.current.scale.setScalar(MathUtils.damp(groupRef.current.scale.x, 0.78 + morph * 0.08, 5.2, delta));
+    }
+
+    if (lineRef.current) {
+      const lineProgress = MathUtils.smoothstep(Math.max(0, (morph - 0.48) / 0.52), 0, 1);
+      (lineRef.current.material as LineBasicMaterial).opacity = lineProgress * 0.58;
+    }
+
+    if (coreRef.current) {
+      coreRef.current.rotation.x = elapsed * 0.03;
+      coreRef.current.rotation.y = elapsed * 0.05;
+      (coreRef.current.material as MeshBasicMaterial).opacity = 0.32 * (1 - morph * 0.64);
+    }
   });
 
   return (
-    <group ref={orbitRef} rotation={ring.tilt}>
-      <mesh>
-        <torusGeometry args={[ring.radius, 0.0055, 12, 256]} />
-        <meshBasicMaterial color={ring.color} transparent opacity={ring.opacity} blending={AdditiveBlending} depthWrite={false} />
-      </mesh>
-      <mesh scale={1.002}>
-        <torusGeometry args={[ring.radius, 0.014, 8, 256]} />
-        <meshBasicMaterial color={ring.color} transparent opacity={ring.opacity * 0.13} blending={AdditiveBlending} depthWrite={false} />
-      </mesh>
-      {children}
+    <group ref={groupRef}>
+      <points ref={pointsRef} geometry={geometry}>
+        <pointsMaterial size={0.034} vertexColors transparent opacity={1} depthWrite={false} blending={AdditiveBlending} />
+      </points>
+      <primitive object={lines} ref={lineRef} />
+      <primitive object={core} ref={coreRef} />
     </group>
   );
 }
 
-function CoreScene({ pointerTarget, shouldReduceMotion }: { pointerTarget: MutableRefObject<CorePointer>; shouldReduceMotion: boolean | null }) {
-  const sceneRef = useRef<Group>(null);
-  const coreRef = useRef<Group>(null);
-  const pointerPosition = useRef<CorePointer>({ x: 0, y: 0 });
-
-  const connectionLines = useMemo(
-    () => [
-      [new Vector3(...polarPoint(1.25, -90)), new Vector3(0, 0, 0)],
-      [new Vector3(...polarPoint(1, 30)), new Vector3(0, 0, 0)],
-      [new Vector3(...polarPoint(1, 210)), new Vector3(0, 0, 0)],
-      [new Vector3(...polarPoint(1.25, 150)), new Vector3(...polarPoint(0.7, -30))]
-    ],
-    []
-  );
-
-  useFrame(({ clock }, delta) => {
-    if (!sceneRef.current || !coreRef.current || shouldReduceMotion) return;
-
-    pointerPosition.current.x = MathUtils.damp(pointerPosition.current.x, pointerTarget.current.x, 4.2, delta);
-    pointerPosition.current.y = MathUtils.damp(pointerPosition.current.y, pointerTarget.current.y, 4.2, delta);
-
-    sceneRef.current.rotation.x = MathUtils.damp(sceneRef.current.rotation.x, 0.08 + pointerPosition.current.y * 0.11, 3.1, delta);
-    sceneRef.current.rotation.y = MathUtils.damp(sceneRef.current.rotation.y, -0.18 + pointerPosition.current.x * 0.14, 3.1, delta);
-    sceneRef.current.position.x = MathUtils.damp(sceneRef.current.position.x, -0.1 + pointerPosition.current.x * 0.05, 2.8, delta);
-    sceneRef.current.position.y = MathUtils.damp(sceneRef.current.position.y, 0.28 + pointerPosition.current.y * 0.035, 2.8, delta);
-
-    coreRef.current.rotation.x = clock.elapsedTime * 0.08;
-    coreRef.current.rotation.y = Math.PI / 4 + clock.elapsedTime * 0.12;
-    const scale = 1 + Math.sin(clock.elapsedTime * 0.7) * 0.015;
-    coreRef.current.scale.setScalar(scale);
-  });
-
-  return (
-    <group ref={sceneRef} position={[-0.1, 0.28, 0]} rotation={[0.08, -0.18, 0]} scale={0.76}>
-      <Sparkles count={34} scale={[3, 2.4, 1.4]} size={1.1} speed={0.22} opacity={0.28} color="#6db7ff" />
-
-      <group ref={coreRef}>
-        <mesh>
-          <octahedronGeometry args={[0.56, 0]} />
-          <meshPhysicalMaterial color="#003f9f" emissive="#002f8f" emissiveIntensity={0.82} roughness={0.16} metalness={0.34} clearcoat={1} clearcoatRoughness={0.16} reflectivity={0.82} transparent opacity={0.96} />
-          <Edges color="#d7ebff" threshold={12} />
-        </mesh>
-        <mesh scale={0.62} rotation={[MathUtils.degToRad(18), MathUtils.degToRad(34), 0]}>
-          <octahedronGeometry args={[0.56, 0]} />
-          <meshPhysicalMaterial color="#0b55c8" emissive="#0042bd" emissiveIntensity={0.75} roughness={0.08} metalness={0.12} clearcoat={1} clearcoatRoughness={0.08} transparent opacity={0.3} blending={AdditiveBlending} depthWrite={false} />
-        </mesh>
-        <mesh scale={1.22}>
-          <octahedronGeometry args={[0.56, 0]} />
-          <meshBasicMaterial color="#0070f3" transparent opacity={0.18} blending={AdditiveBlending} depthWrite={false} />
-        </mesh>
-        <mesh scale={1.55}>
-          <octahedronGeometry args={[0.56, 0]} />
-          <meshBasicMaterial color="#78bdff" transparent opacity={0.06} blending={AdditiveBlending} depthWrite={false} />
-        </mesh>
-      </group>
-
-      {rings.map((ring) => (
-        <OrbitalSystem key={ring.id} ring={ring}>
-          {nodes
-            .filter((node) => node.ring === ring.id)
-            .map((node) => (
-              <CoreNode key={node.id} config={node} />
-            ))}
-        </OrbitalSystem>
-      ))}
-
-      {connectionLines.map((points, index) => (
-        <Line key={index} points={points} color="#5fb0ff" transparent opacity={0.18} lineWidth={0.75} />
-      ))}
-    </group>
-  );
-}
-
-export function IntelligenceCore() {
+export function IntelligenceCore({ progressRef }: IntelligenceCoreProps) {
+  const internalProgressRef = useRef(0);
   const shouldReduceMotion = useReducedMotion();
-  const pointerTarget = useRef<CorePointer>({ x: 0, y: 0 });
-
-  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    pointerTarget.current.x = MathUtils.clamp(((event.clientX - rect.left) / rect.width - 0.5) * 2, -1, 1);
-    pointerTarget.current.y = MathUtils.clamp(-((event.clientY - rect.top) / rect.height - 0.5) * 2, -1, 1);
-  }
-
-  function handlePointerLeave() {
-    pointerTarget.current.x = 0;
-    pointerTarget.current.y = 0;
-  }
+  const activeProgressRef = progressRef ?? internalProgressRef;
 
   return (
-    <div className="intelligence-core" onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
-      <StaticCore hidden />
-      <div className="intelligence-core__canvas" aria-hidden="true">
-        <Suspense fallback={null}>
-          <Canvas
-            camera={{ position: [0.08, 0.08, 5.5], fov: 33 }}
-            dpr={[1, 1.5]}
-            frameloop={shouldReduceMotion ? "demand" : "always"}
-            gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
-          >
-            <ambientLight intensity={0.18} color="#10213a" />
-            <pointLight color="#9ccfff" position={[2.8, 3.4, 3]} intensity={1.85} />
-            <pointLight color="#0070f3" position={[-3, 1.4, 2.2]} intensity={1.2} />
-            <pointLight color="#214dff" position={[0, -2.6, -2.4]} intensity={0.7} />
-            <CoreScene pointerTarget={pointerTarget} shouldReduceMotion={shouldReduceMotion} />
+    <div className="intelligence-core intelligence-core--hero">
+      <CoreBoundary fallback={<StaticCore />}>
+        <Suspense fallback={<StaticCore />}>
+          <Canvas camera={{ position: [0, 0, 8.4], fov: 52 }} dpr={[1, 1.6]} gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} frameloop={shouldReduceMotion ? "demand" : "always"}>
+            <ambientLight intensity={0.35} color="#10213a" />
+            <ParticleLattice progressRef={activeProgressRef} shouldReduceMotion={shouldReduceMotion} />
           </Canvas>
         </Suspense>
-      </div>
+      </CoreBoundary>
     </div>
   );
 }

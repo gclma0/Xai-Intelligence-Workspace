@@ -1,63 +1,37 @@
-Read AGENTS.md and only fix the Knowledge Graph visualization inside the Neural Pipeline popup.
+inspect `aicore-hero.html`, but do not replace or redesign the current Hero. Preserve the current AI Core design, layout, materials, colors, object count, container dimensions, surrounding text, and all existing Hero content exactly.
 
-Do not change the popup size, layout, colors, borders, typography, animations, or overall pipeline sequence.
+Only make these two corrections:
 
-The popup is already the correct size. The problem is ONLY the graph implementation.
+1. Animation smoothness
+- Match the smooth motion behavior from `aicore-hero.html`.
+- Use the same style of damped pointer interpolation, slow ambient rotation, scrubbed GSAP ScrollTrigger progression, and continuous `requestAnimationFrame` rendering.
+- Remove visible stepping, sudden state changes, snapping, jitter, and abrupt speed changes.
+- Use lerped/interpolated values rather than directly assigning positions or rotations.
+- Keep the existing animation concept and visual objects unchanged.
+- Ensure transitions remain smooth when scrolling both forward and backward.
+- Do not change the page’s current scroll length or pinning behavior unless required to match the reference smoothness.
 
-Current issue:
-The graph renders as a tiny cluster in the top-left corner while the graph container is almost empty. This means the graph viewport/layout is incorrect, not the popup.
+2. Final structured geometry visibility
+- Keep the existing final structured geometry design unchanged.
+- Make it as clearly visible as the structured grid in `aicore-hero.html`.
+- During the final morph stage, ensure particles reach their final structured positions fully.
+- Increase only the final structure’s visibility where necessary through line opacity, particle opacity, point size, contrast, or render order.
+- Fade the structured connection lines in progressively during the latter part of the morph.
+- Ensure the final structure remains clearly visible long enough to be understood before the section ends.
+- Do not replace the final geometry, add new shapes, or change its composition.
 
-Your task is to completely rebuild the graph visualization so it naturally fills the available graph area.
+Use `aicore-hero.html` only as the behavioral reference for interpolation, scroll-linked morphing, and final-geometry visibility. Its reference uses continuous particle interpolation and progressively reveals its structured lines during the final morph. :contentReference[oaicite:0]{index=0}
 
-Requirements:
+Before editing, identify the exact causes of:
+- the current animation roughness;
+- the final structured geometry being too faint or incomplete.
 
-• Treat the graph as a responsive visualization, not a static image.
-• The graph should occupy approximately 80–90% of the available graph canvas.
-• Center the graph horizontally and vertically.
-• Distribute nodes across the entire canvas rather than clustering them in one corner.
-• Scale node positions relative to the container dimensions instead of using tiny fixed coordinates.
-• Ensure connection lines span naturally across the graph.
-• Increase node size and label readability.
-• Use the full width and height of the graph container.
-
-Implementation guidance:
-
-If using SVG:
-- Create a proper responsive SVG.
-- Use width="100%" and height="100%".
-- Use a correct viewBox matching the designed coordinate system.
-- Remove any transform: scale(...) that shrinks the graph.
-- Remove fixed pixel positioning that assumes a small canvas.
-
-If using React Flow:
-- Call fitView() after the popup finishes expanding.
-- Recalculate layout after mount.
-- Ensure the parent container has a real width and height before rendering.
-- Disable excessive padding in fitView.
-
-If using Canvas:
-- Redraw using the actual container width and height.
-- Compute node positions dynamically from the container size.
-- Scale the graph proportionally.
-
-Visual target:
-
-The graph should resemble an enterprise knowledge graph:
-- approximately 6–8 nodes
-- evenly distributed
-- one central entity
-- several connected entities
-- subtle blue connection lines
-- soft node glow
-- readable labels
-- balanced spacing
-- no overlapping nodes
-
-The graph should immediately read as a complete visualization instead of a tiny preview.
-
-After implementation:
-- verify the graph fills the canvas;
-- verify it remains responsive;
-- run lint;
-- run build;
-- stop after this fix.
+After editing:
+- compare the current version before and after;
+- verify that the visual design is unchanged;
+- test scrolling forward and backward;
+- test desktop and mobile;
+- respect reduced motion;
+- run `npm run lint`;
+- run `npm run build`;
+- stop after these two fixes and report the exact values or logic changed.

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Core — From Signal to System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#090c11;
+    --bg2:#0c121b;
+    --ink:#e9eef6;
+    --ink-dim:#7c879c;
+    --ink-faint:#454e5f;
+    --cold:#4a90ff;
+    --hot:#9b6bff;
+    --signal:#33e6c4;
+    --hairline:rgba(233,238,246,0.09);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{background:var(--bg);}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    cursor:default;
+  }
+  ::selection{background:var(--signal);color:#04100d;}
+
+  #canvas-wrap{
+    position:fixed;
+    inset:0;
+    z-index:1;
+  }
+  #canvas-wrap canvas{display:block;}
+
+  .vignette{
+    position:fixed;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    background:
+      radial-gradient(ellipse 120% 80% at 50% 20%, transparent 40%, var(--bg) 100%),
+      linear-gradient(180deg, rgba(9,12,17,0.15) 0%, transparent 15%, transparent 85%, var(--bg) 100%);
+  }
+
+  .noise{
+    position:fixed;
+    inset:0;
+    z-index:3;
+    pointer-events:none;
+    opacity:0.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  header.nav{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:10;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:28px 44px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    color:var(--ink-dim);
+    mix-blend-mode:difference;
+  }
+  header.nav .mark{
+    color:var(--ink);
+    font-weight:500;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  header.nav .mark::before{
+    content:'';
+    width:7px;height:7px;
+    border-radius:50%;
+    background:var(--signal);
+    box-shadow:0 0 8px var(--signal);
+    animation:pulse-dot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot{
+    0%,100%{opacity:1; transform:scale(1);}
+    50%{opacity:0.4; transform:scale(0.7);}
+  }
+  header.nav .clock{
+    font-variant-numeric: tabular-nums;
+  }
+
+  main{
+    position:relative;
+    z-index:5;
+  }
+
+  section.hero{
+    height:340vh;
+    position:relative;
+  }
+
+  .hero-pin{
+    position:sticky;
+    top:0;
+    height:100vh;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:0 24px;
+    pointer-events:none;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    color:var(--signal);
+    margin-bottom:22px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    opacity:0;
+  }
+  .eyebrow .rule{
+    width:28px;height:1px;background:var(--signal);opacity:0.6;
+  }
+
+  .headline{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:clamp(2.4rem, 6.4vw, 6.2rem);
+    line-height:1.02;
+    letter-spacing:-0.02em;
+    text-align:center;
+    max-width:16ch;
+    opacity:0;
+  }
+  .headline .row{display:block; overflow:hidden;}
+  .headline .row span{display:inline-block; will-change:transform;}
+  .headline .accent{
+    background:linear-gradient(90deg, var(--cold), var(--hot) 55%, var(--signal));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  .subtext{
+    font-family:'Inter', sans-serif;
+    font-weight:400;
+    font-size:clamp(0.95rem, 1.4vw, 1.15rem);
+    line-height:1.65;
+    color:var(--ink-dim);
+    max-width:46ch;
+    text-align:center;
+    margin-top:26px;
+    opacity:0;
+  }
+
+  .scroll-cue{
+    position:absolute;
+    bottom:44px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.18em;
+    color:var(--ink-faint);
+    opacity:0;
+    pointer-events:none;
+  }
+  .scroll-cue .track{
+    width:1px; height:38px;
+    background:linear-gradient(180deg, var(--signal), transparent);
+    position:relative;
+    overflow:hidden;
+  }
+  .scroll-cue .track::after{
+    content:'';
+    position:absolute;
+    top:-100%; left:0; width:100%; height:100%;
+    background:var(--signal);
+    animation:cue-fall 1.8s ease-in-out infinite;
+  }
+  @keyframes cue-fall{
+    0%{top:-100%;}
+    100%{top:100%;}
+  }
+
+  .stage-rail{
+    position:fixed;
+    right:44px;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:10;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    pointer-events:none;
+  }
+  .stage-rail .stage{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    color:var(--ink-faint);
+    transition:color 0.4s ease;
+  }
+  .stage-rail .stage .num{
+    width:20px;
+    color:var(--ink-faint);
+    transition:color 0.4s ease;
+  }
+  .stage-rail .stage.active{
+    color:var(--ink);
+  }
+  .stage-rail .stage.active .num{
+    color:var(--signal);
+  }
+  .stage-rail .stage .bar{
+    width:14px; height:1px;
+    background:var(--ink-faint);
+    transition:background 0.4s ease, width 0.4s ease;
+  }
+  .stage-rail .stage.active .bar{
+    background:var(--signal);
+    width:22px;
+  }
+
+  .panel-tag{
+    position:absolute;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.06em;
+    color:var(--ink-dim);
+    border:1px solid var(--hairline);
+    background:rgba(13,18,27,0.55);
+    backdrop-filter:blur(6px);
+    padding:6px 10px;
+    border-radius:3px;
+    opacity:0;
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  .panel-tag .dot{
+    display:inline-block;
+    width:5px;height:5px;
+    border-radius:50%;
+    background:var(--signal);
+    margin-right:7px;
+  }
+
+  section.next{
+    position:relative;
+    z-index:5;
+    background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    padding:14vh 44px 18vh;
+    display:flex;
+    justify-content:center;
+  }
+  section.next .inner{
+    max-width:640px;
+    text-align:center;
+  }
+  section.next .kicker{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.2em;
+    color:var(--ink-faint);
+    margin-bottom:18px;
+  }
+  section.next h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:500;
+    font-size:clamp(1.3rem, 2.4vw, 1.9rem);
+    line-height:1.4;
+    color:var(--ink-dim);
+  }
+  section.next h2 strong{
+    color:var(--ink);
+    font-weight:600;
+  }
+
+  @media (max-width: 720px){
+    .stage-rail{display:none;}
+    header.nav{padding:20px 20px;}
+    section.next{padding:10vh 24px 14vh;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="canvas-wrap"></div>
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<header class="nav">
+  <div class="mark">AI CORE</div>
+  <div class="clock" id="clock">00:00:00 UTC</div>
+</header>
+
+<aside class="stage-rail" id="stageRail">
+  <div class="stage active" data-i="0"><span class="num">01</span><span class="bar"></span><span>RAW DATA</span></div>
+  <div class="stage" data-i="1"><span class="num">02</span><span class="bar"></span><span>STRUCTURE</span></div>
+  <div class="stage" data-i="2"><span class="num">03</span><span class="bar"></span><span>INSIGHT</span></div>
+  <div class="stage" data-i="3"><span class="num">04</span><span class="bar"></span><span>AUTOMATION</span></div>
+</aside>
+
+<main>
+  <section class="hero">
+    <div class="hero-pin">
+      <div class="eyebrow" id="eyebrow"><span class="rule"></span>SYSTEM ONLINE — INGESTING SIGNAL</div>
+      <h1 class="headline" id="headline">
+        <span class="row"><span>Every stray</span></span>
+        <span class="row"><span>signal becomes <span class="accent">a system.</span></span></span>
+      </h1>
+      <p class="subtext" id="subtext">
+        Raw data enters as noise. The core resolves it into structure, structure
+        into insight, and insight into automations that act on their own.
+      </p>
+      <div class="scroll-cue" id="scrollCue">
+        <span>SCROLL TO RESOLVE</span>
+        <span class="track"></span>
+      </div>
+
+      <div class="panel-tag" id="tag1" style="top:28%; left:14%;"><span class="dot"></span>node.cluster_04</div>
+      <div class="panel-tag" id="tag2" style="top:64%; right:12%;"><span class="dot"></span>throughput: 12.4k/s</div>
+      <div class="panel-tag" id="tag3" style="top:20%; right:18%;"><span class="dot"></span>schema: resolved</div>
+    </div>
+  </section>
+
+  <section class="next">
+    <div class="inner">
+      <div class="kicker">// WHAT THE CORE DOES NEXT</div>
+      <h2>Once structured, the same lattice <strong>surfaces the signals worth acting on</strong> — and hands them to automations that run without waiting for a human in the loop.</h2>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+/* ---------- clock ---------- */
+function tickClock(){
+  const d = new Date();
+  const s = d.toUTCString().split(' ')[4] + ' UTC';
+  document.getElementById('clock').textContent = s;
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+/* ---------- three.js scene ---------- */
+const wrap = document.getElementById('canvas-wrap');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(52, window.innerWidth/window.innerHeight, 0.1, 100);
+camera.position.set(0, 0, 9);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+wrap.appendChild(renderer.domElement);
+
+const group = new THREE.Group();
+scene.add(group);
+
+/* ---- build two position sets: chaotic cloud -> structured grid ---- */
+const COUNT = 4200;
+const chaotic = new Float32Array(COUNT * 3);
+const structured = new Float32Array(COUNT * 3);
+const colorsCold = new Float32Array(COUNT * 3);
+const colorsHot = new Float32Array(COUNT * 3);
+const sizes = new Float32Array(COUNT);
+
+const colCold = new THREE.Color('#3d7dff');
+const colHot = new THREE.Color('#9b6bff');
+const colSignal = new THREE.Color('#33e6c4');
+
+// chaotic: jittered sphere volume (raw / noisy data)
+function randSpherical(radius){
+  const u = Math.random(), v = Math.random();
+  const theta = 2*Math.PI*u;
+  const phi = Math.acos(2*v - 1);
+  const r = radius * Math.cbrt(Math.random()*0.6 + 0.4);
+  return [
+    r * Math.sin(phi) * Math.cos(theta),
+    r * Math.sin(phi) * Math.sin(theta),
+    r * Math.cos(phi)
+  ];
+}
+
+// structured: 3D grid lattice (rows/cols/layers -> "panels/nodes")
+const GX = 21, GY = 14, GZ = 6;
+let gi = 0;
+const gridPoints = [];
+for(let z=0; z<GZ; z++){
+  for(let y=0; y<GY; y++){
+    for(let x=0; x<GX; x++){
+      gridPoints.push([
+        (x/(GX-1) - 0.5) * 9.6,
+        (y/(GY-1) - 0.5) * 6.0,
+        (z/(GZ-1) - 0.5) * 3.2
+      ]);
+    }
+  }
+}
+// shuffle grid points so morph doesn't look ordered stripe-by-stripe
+for(let i=gridPoints.length-1;i>0;i--){
+  const j = Math.floor(Math.random()*(i+1));
+  [gridPoints[i], gridPoints[j]] = [gridPoints[j], gridPoints[i]];
+}
+
+for(let i=0;i<COUNT;i++){
+  const [cx,cy,cz] = randSpherical(4.6);
+  chaotic[i*3+0] = cx;
+  chaotic[i*3+1] = cy;
+  chaotic[i*3+2] = cz;
+
+  const g = gridPoints[i % gridPoints.length];
+  const jitter = 0.02;
+  structured[i*3+0] = g[0] + (Math.random()-0.5)*jitter;
+  structured[i*3+1] = g[1] + (Math.random()-0.5)*jitter;
+  structured[i*3+2] = g[2] + (Math.random()-0.5)*jitter;
+
+  colCold.toArray(colorsCold, i*3);
+  colHot.toArray(colorsHot, i*3);
+
+  sizes[i] = Math.random()*0.55 + 0.35;
+}
+
+const geometry = new THREE.BufferGeometry();
+geometry.setAttribute('position', new THREE.BufferAttribute(chaotic.slice(), 3));
+geometry.setAttribute('color', new THREE.BufferAttribute(colorsCold.slice(), 3));
+geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+
+const vertexShader = `
+  attribute float aSize;
+  varying vec3 vColor;
+  uniform float uPixelRatio;
+  void main(){
+    vColor = color;
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = aSize * 5.2 * uPixelRatio * (1.0 / -mvPosition.z) * 60.0 * 0.1;
+    gl_Position = projectionMatrix * mvPosition;
+  }
+`;
+const fragmentShader = `
+  varying vec3 vColor;
+  void main(){
+    vec2 c = gl_PointCoord - vec2(0.5);
+    float d = length(c);
+    float alpha = smoothstep(0.5, 0.0, d);
+    float core = smoothstep(0.18, 0.0, d);
+    vec3 col = vColor + core * 0.5;
+    gl_FragColor = vec4(col, alpha);
+  }
+`;
+
+const material = new THREE.ShaderMaterial({
+  vertexShader, fragmentShader,
+  uniforms:{ uPixelRatio:{ value: Math.min(window.devicePixelRatio,2) } },
+  vertexColors:true,
+  transparent:true,
+  depthWrite:false,
+  blending:THREE.AdditiveBlending
+});
+
+const points = new THREE.Points(geometry, material);
+group.add(points);
+
+/* connecting lines that fade in once structured (network / grid look) */
+const lineGeom = new THREE.BufferGeometry();
+const linePositions = [];
+const step = GX*GY;
+for(let z=0; z<GZ; z++){
+  for(let y=0; y<GY; y++){
+    for(let x=0; x<GX-1; x++){
+      const iA = z*step + y*GX + x;
+      const iB = z*step + y*GX + x + 1;
+      linePositions.push(...gridPoints[iA], ...gridPoints[iB]);
+    }
+  }
+}
+lineGeom.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+const lineMat = new THREE.LineBasicMaterial({ color: 0x33e6c4, transparent:true, opacity:0 });
+const lines = new THREE.LineSegments(lineGeom, lineMat);
+group.add(lines);
+
+/* ambient thin wireframe core sphere, present from the start as an anchor */
+const coreGeo = new THREE.IcosahedronGeometry(1.15, 1);
+const coreMat = new THREE.MeshBasicMaterial({ color:0x1c2433, wireframe:true, transparent:true, opacity:0.35 });
+const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+group.add(coreMesh);
+
+/* ---------- interaction state ---------- */
+let mouseX = 0, mouseY = 0, targetRotX = 0, targetRotY = 0;
+window.addEventListener('pointermove', (e)=>{
+  mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+  mouseY = (e.clientY / window.innerHeight) * 2 - 1;
+});
+
+let scrollProgress = 0; // 0 -> 1 across the whole hero pin
+const clock = new THREE.Clock();
+
+function animate(){
+  const t = clock.getElapsedTime();
+
+  targetRotY += (mouseX*0.35 - targetRotY) * 0.04;
+  targetRotX += (-mouseY*0.22 - targetRotX) * 0.04;
+  group.rotation.y = targetRotY + t*0.02;
+  group.rotation.x = targetRotX;
+
+  coreMesh.rotation.y = t*0.05;
+  coreMesh.rotation.x = t*0.03;
+  coreMesh.material.opacity = 0.35 * (1 - scrollProgress*0.6);
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.addEventListener('resize', ()=>{
+  camera.aspect = window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* ---------- scroll-driven morph via GSAP ScrollTrigger ---------- */
+const posAttr = geometry.getAttribute('position');
+const colAttr = geometry.getAttribute('color');
+const morphState = { t: 0 };
+
+function applyMorph(t){
+  for(let i=0;i<COUNT;i++){
+    const ix = i*3;
+    posAttr.array[ix+0] = THREE.MathUtils.lerp(chaotic[ix+0], structured[ix+0], t);
+    posAttr.array[ix+1] = THREE.MathUtils.lerp(chaotic[ix+1], structured[ix+1], t);
+    posAttr.array[ix+2] = THREE.MathUtils.lerp(chaotic[ix+2], structured[ix+2], t);
+
+    colAttr.array[ix+0] = THREE.MathUtils.lerp(colorsCold[ix+0], colorsHot[ix+0], t);
+    colAttr.array[ix+1] = THREE.MathUtils.lerp(colorsCold[ix+1], colorsHot[ix+1], t);
+    colAttr.array[ix+2] = THREE.MathUtils.lerp(colorsCold[ix+2], colorsHot[ix+2], t);
+  }
+  posAttr.needsUpdate = true;
+  colAttr.needsUpdate = true;
+  lineMat.opacity = Math.max(0, (t - 0.55) / 0.45) * 0.55;
+}
+
+ScrollTrigger.create({
+  trigger: '.hero',
+  start: 'top top',
+  end: 'bottom bottom',
+  scrub: 0.6,
+  onUpdate: (self)=>{
+    scrollProgress = self.progress;
+    applyMorph(self.progress);
+
+    // camera drifts slightly closer & lower as structure resolves
+    camera.position.z = 9 - self.progress*1.6;
+    camera.position.y = -self.progress*0.4;
+
+    // stage rail highlight
+    const stageIdx = Math.min(3, Math.floor(self.progress * 4));
+    document.querySelectorAll('.stage-rail .stage').forEach((el,i)=>{
+      el.classList.toggle('active', i === stageIdx);
+    });
+  }
+});
+
+</script>
+<script type="module">
+/* ---------- UI choreography (Framer Motion) ---------- */
+import { animate, scroll } from "https://esm.sh/motion@11";
+
+const heroEl = document.querySelector('.hero');
+const easeOut = [0.16, 1, 0.3, 1];
+
+/* entrance sequence */
+animate('#eyebrow', { opacity: [0, 1] }, { duration: 0.7, delay: 0.15, easing: 'ease-out' });
+animate('.headline .row span', { y: ['110%', '0%'] }, {
+  duration: 0.9,
+  delay: (i) => 0.3 + i * 0.08,
+  easing: easeOut
+});
+animate('#headline', { opacity: [0, 1] }, { duration: 0.01, delay: 0.3 });
+animate('#subtext', { opacity: [0, 1] }, { duration: 0.8, delay: 0.85, easing: 'ease-out' });
+animate('#scrollCue', { opacity: [0, 1] }, { duration: 0.6, delay: 1.1, easing: 'ease-out' });
+
+/* floating panel tags fade in, tied to scroll progress through the pinned hero */
+scroll(animate('#tag1', { opacity: [0, 1], y: [0, -8] }), { target: heroEl, offset: [0.20, 0.55] });
+scroll(animate('#tag2', { opacity: [0, 1], y: [0, -8] }), { target: heroEl, offset: [0.30, 0.62] });
+scroll(animate('#tag3', { opacity: [0, 1], y: [0, -8] }), { target: heroEl, offset: [0.45, 0.75] });
+
+/* eyebrow / subtext / scroll-cue fade out as the lattice resolves */
+scroll(
+  animate(['#eyebrow', '#subtext', '#scrollCue'], { opacity: [1, 0] }),
+  { target: heroEl, offset: [0.70, 0.92] }
+);
+</script>
+</body>
+</html>
