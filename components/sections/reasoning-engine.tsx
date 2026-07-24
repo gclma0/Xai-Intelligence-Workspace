@@ -1,6 +1,5 @@
 "use client";
 
-import { Check } from "lucide-react";
 import type { CSSProperties, PointerEvent } from "react";
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
@@ -96,9 +95,7 @@ export function ReasoningEngine() {
           <div className="reasoning-highlights">
             {reasoningHighlights.map((highlight) => (
               <article key={highlight.title} className="reasoning-highlight">
-                <span className="reasoning-highlight__icon" aria-hidden="true">
-                  <Check />
-                </span>
+                <span className="reasoning-highlight__pointer" aria-hidden="true" />
                 <p>
                   <strong>{highlight.title}</strong>
                   <span>{highlight.copy}</span>

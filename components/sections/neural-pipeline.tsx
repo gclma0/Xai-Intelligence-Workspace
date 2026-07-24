@@ -61,44 +61,44 @@ export function NeuralPipeline() {
 
       timeline
         .to(".section-heading", { opacity: 1, y: 0, duration: 0.36, ease: "power2.out" }, 0)
-        .to(".pipeline-stack:first-child .pipeline-stage-label", { opacity: 1, y: 0, duration: 0.28, ease: "power2.out" }, "+=0.16");
+        .to(".pipeline-stack:first-child .pipeline-stage-label", { opacity: 1, y: 0, duration: 0.24, ease: "power2.out" }, "+=0.08");
 
       sourceCards.forEach((card, index) => {
         const sourcePulse = card.querySelector(".pipeline-source-pulse");
 
         timeline
-          .to(card, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, index === 0 ? "+=0.12" : "+=0.16")
-          .to(card, { borderColor: "rgba(0,112,243,0.7)", boxShadow: "0 0 24px rgba(0,112,243,0.18)", duration: 0.28, ease: "power2.out" }, "-=0.08")
-          .fromTo(sourcePulse, { opacity: 0, xPercent: -120, scaleX: 0.35 }, { opacity: 1, xPercent: 125, scaleX: 1, duration: 0.42, ease: "power1.inOut" }, "-=0.08")
-          .to(card, { borderColor: "rgba(65,71,84,0.3)", boxShadow: "0 0 0 rgba(0,112,243,0)", duration: 0.34, ease: "power2.out" }, "-=0.18");
+          .to(card, { opacity: 1, y: 0, duration: 0.24, ease: "power2.out" }, index === 0 ? "+=0.06" : "+=0.08")
+          .to(card, { borderColor: "rgba(0,112,243,0.7)", boxShadow: "0 0 20px rgba(0,112,243,0.16)", duration: 0.2, ease: "power2.out" }, "-=0.06")
+          .fromTo(sourcePulse, { opacity: 0, xPercent: -120, scaleX: 0.35 }, { opacity: 1, xPercent: 125, scaleX: 1, duration: 0.28, ease: "power1.inOut" }, "-=0.06")
+          .to(card, { borderColor: "rgba(65,71,84,0.3)", boxShadow: "0 0 0 rgba(0,112,243,0)", duration: 0.24, ease: "power2.out" }, "-=0.12");
       });
 
       timeline
-        .to(".pipeline-line--left", { opacity: 1, duration: 0.24, ease: "power2.out" }, "+=0.08")
-        .to(".pipeline-core", { opacity: 1, duration: 0.32, ease: "power2.out" }, "-=0.02")
-        .to(".pipeline-core .pipeline-stage-label", { opacity: 1, y: 0, duration: 0.24, ease: "power2.out" }, "<")
-        .fromTo(".pipeline-data-pulse--left", { opacity: 0, xPercent: -100, scaleX: 0.5 }, { opacity: 1, xPercent: 280, scaleX: 1, duration: 0.72, ease: "power1.inOut" }, "-=0.02")
-        .to(".pipeline-data-pulse--left", { opacity: 0, duration: 0.16 }, ">-0.08")
-        .to(".pipeline-core__ring", { scale: 1.13, boxShadow: "0 0 42px rgba(0,112,243,0.34)", borderColor: "rgba(0,112,243,0.86)", duration: 0.42, ease: "power2.out" }, "+=0.12")
-        .to(".pipeline-core__orbit", { scale: 1.24, opacity: 0.78, duration: 0.42, ease: "power2.out" }, "<")
-        .to(".pipeline-core__diamond", { scale: 1.1, boxShadow: "0 0 48px rgba(0,112,243,0.52)", duration: 0.42, ease: "power2.out" }, "<")
-        .fromTo(".pipeline-core__wave", { opacity: 0.46, scale: 0.46 }, { opacity: 0, scale: 1.78, duration: 0.9, ease: "power2.out" }, "-=0.12")
-        .to(".pipeline-core__orbit--wide", { rotate: 360, duration: 1.18, ease: "none" }, "-=0.66")
-        .to(".pipeline-core__orbit--tilt", { rotate: -302, duration: 1.18, ease: "none" }, "<")
-        .to(".pipeline-core__orbit--cross", { rotate: 252, duration: 1.18, ease: "none" }, "<")
-        .to(".pipeline-core__ring", { scale: 1.02, boxShadow: "0 0 28px rgba(0,112,243,0.22)", duration: 0.44, ease: "power2.out" }, ">-0.16")
-        .to(".pipeline-core__orbit", { scale: 1.05, opacity: 0.5, duration: 0.44, ease: "power2.out" }, "<")
-        .to(".pipeline-core__diamond", { scale: 1, boxShadow: "0 0 28px rgba(0,112,243,0.34)", duration: 0.44, ease: "power2.out" }, "<")
-        .to(".pipeline-line--right", { opacity: 1, duration: 0.24, ease: "power2.out" }, "-=0.06")
-        .to(".pipeline-output-stack .pipeline-stage-label", { opacity: 1, y: 0, duration: 0.24, ease: "power2.out" }, "<")
-        .to(".pipeline-line--left, .pipeline-line--right", { filter: "drop-shadow(0 0 10px rgba(0,112,243,0.32))", duration: 0.42, ease: "power2.out" }, "<");
+        .to(".pipeline-line--left", { opacity: 1, duration: 0.18, ease: "power2.out" }, "+=0.04")
+        .to(".pipeline-core", { opacity: 1, duration: 0.24, ease: "power2.out" }, "-=0.02")
+        .to(".pipeline-core .pipeline-stage-label", { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, "<")
+        .fromTo(".pipeline-data-pulse--left", { opacity: 0, xPercent: -100, scaleX: 0.5 }, { opacity: 1, xPercent: 280, scaleX: 1, duration: 0.46, ease: "power1.inOut" }, "-=0.02")
+        .to(".pipeline-data-pulse--left", { opacity: 0, duration: 0.12 }, ">-0.06")
+        .to(".pipeline-core__ring", { scale: 1.13, boxShadow: "0 0 34px rgba(0,112,243,0.3)", borderColor: "rgba(0,112,243,0.86)", duration: 0.3, ease: "power2.out" }, "+=0.06")
+        .to(".pipeline-core__orbit", { scale: 1.24, opacity: 0.78, duration: 0.3, ease: "power2.out" }, "<")
+        .to(".pipeline-core__diamond", { scale: 1.1, boxShadow: "0 0 40px rgba(0,112,243,0.46)", duration: 0.3, ease: "power2.out" }, "<")
+        .fromTo(".pipeline-core__wave", { opacity: 0.46, scale: 0.46 }, { opacity: 0, scale: 1.78, duration: 0.56, ease: "power2.out" }, "-=0.08")
+        .to(".pipeline-core__orbit--wide", { rotate: 360, duration: 0.72, ease: "none" }, "-=0.42")
+        .to(".pipeline-core__orbit--tilt", { rotate: -302, duration: 0.72, ease: "none" }, "<")
+        .to(".pipeline-core__orbit--cross", { rotate: 252, duration: 0.72, ease: "none" }, "<")
+        .to(".pipeline-core__ring", { scale: 1.02, boxShadow: "0 0 24px rgba(0,112,243,0.2)", duration: 0.3, ease: "power2.out" }, ">-0.12")
+        .to(".pipeline-core__orbit", { scale: 1.05, opacity: 0.5, duration: 0.3, ease: "power2.out" }, "<")
+        .to(".pipeline-core__diamond", { scale: 1, boxShadow: "0 0 24px rgba(0,112,243,0.3)", duration: 0.3, ease: "power2.out" }, "<")
+        .to(".pipeline-line--right", { opacity: 1, duration: 0.18, ease: "power2.out" }, "-=0.04")
+        .to(".pipeline-output-stack .pipeline-stage-label", { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, "<")
+        .to(".pipeline-line--left, .pipeline-line--right", { filter: "drop-shadow(0 0 8px rgba(0,112,243,0.28))", duration: 0.28, ease: "power2.out" }, "<");
 
       outputCards.forEach((card, index) => {
         const result = outputResults[index];
 
         timeline
-          .fromTo(".pipeline-data-pulse--right", { opacity: 0, xPercent: -120, scaleX: 0.5 }, { opacity: 1, xPercent: 285, scaleX: 1, duration: 0.72, ease: "power1.inOut" }, index === 0 ? "+=0.08" : "+=0.18")
-          .to(".pipeline-data-pulse--right", { opacity: 0, duration: 0.14 }, ">-0.08")
+          .fromTo(".pipeline-data-pulse--right", { opacity: 0, xPercent: -120, scaleX: 0.5 }, { opacity: 1, xPercent: 285, scaleX: 1, duration: 0.46, ease: "power1.inOut" }, index === 0 ? "+=0.04" : "+=0.08")
+          .to(".pipeline-data-pulse--right", { opacity: 0, duration: 0.1 }, ">-0.06")
           .call(() => {
             if (result) {
               placeResultPanel(card, result);
@@ -106,21 +106,21 @@ export function NeuralPipeline() {
 
             card.classList.add("is-revealing");
           })
-          .to(card, { opacity: 1, y: 0, duration: 0.24, ease: "power2.out" }, "-=0.1")
-          .to(card, { borderColor: "rgba(0,112,243,0.72)", boxShadow: "0 0 28px rgba(0,112,243,0.18)", duration: 0.26, ease: "power2.out" }, "-=0.04")
-          .fromTo(result, { opacity: 0, y: -8, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.42, ease: "power2.out" }, "-=0.02")
-          .to(result, { opacity: 1, duration: 1.45 })
-          .to(result, { opacity: 0, y: 8, scale: 0.99, duration: 0.28, ease: "power2.inOut" })
+          .to(card, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, "-=0.08")
+          .to(card, { borderColor: "rgba(0,112,243,0.72)", boxShadow: "0 0 22px rgba(0,112,243,0.16)", duration: 0.2, ease: "power2.out" }, "-=0.04")
+          .fromTo(result, { opacity: 0, y: -8, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power2.out" }, "-=0.02")
+          .to(result, { opacity: 1, duration: 0.66 })
+          .to(result, { opacity: 0, y: 8, scale: 0.99, duration: 0.22, ease: "power2.inOut" })
           .call(() => card.classList.add("is-complete"))
           .call(() => card.classList.remove("is-revealing"))
-          .to(card, { borderColor: "rgba(0,112,243,0.36)", boxShadow: "0 0 16px rgba(0,112,243,0.08)", duration: 0.28, ease: "power2.out" }, "<");
+          .to(card, { borderColor: "rgba(0,112,243,0.36)", boxShadow: "0 0 14px rgba(0,112,243,0.08)", duration: 0.22, ease: "power2.out" }, "<");
       });
 
       timeline
-        .to(".pipeline-core__orbit", { opacity: 0.36, rotate: 0, duration: 0.6, ease: "power2.out" })
-        .to(".pipeline-core__ring", { boxShadow: "0 0 18px rgba(0,112,243,0.12)", borderColor: "rgba(0,112,243,0.5)", duration: 0.54, ease: "power2.out" }, "<")
+        .to(".pipeline-core__orbit", { opacity: 0.36, rotate: 0, duration: 0.36, ease: "power2.out" })
+        .to(".pipeline-core__ring", { boxShadow: "0 0 18px rgba(0,112,243,0.12)", borderColor: "rgba(0,112,243,0.5)", duration: 0.34, ease: "power2.out" }, "<")
         .call(() => rootRef.current?.classList.add("is-complete"))
-        .to(".pipeline-completion", { opacity: 1, y: 0, duration: 0.34, ease: "power2.out" });
+        .to(".pipeline-completion", { opacity: 1, y: 0, duration: 0.26, ease: "power2.out" });
     }, rootRef);
 
     return () => context.revert();

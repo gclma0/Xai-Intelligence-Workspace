@@ -26,25 +26,13 @@ const IntelligenceCore = dynamic<{ progressRef: MutableRefObject<number> }>(() =
 
 const stages = ["RAW DATA", "STRUCTURE", "INSIGHT", "AUTOMATION"];
 
-function formatUtcTime() {
-  return `${new Date().toUTCString().split(" ")[4]} UTC`;
-}
-
 export function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
   const targetProgressRef = useRef(0);
   const progressRef = useRef(0);
   const shouldReduceMotion = useReducedMotion();
   const [activeStage, setActiveStage] = useState(0);
-  const [clock, setClock] = useState("00:00:00 UTC");
   const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    setClock(formatUtcTime());
-    const timer = window.setInterval(() => setClock(formatUtcTime()), 1000);
-
-    return () => window.clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     let frame = 0;
@@ -103,36 +91,28 @@ export function HeroSection() {
         <div className="hero-vignette" aria-hidden="true" />
         <div className="hero-noise" aria-hidden="true" />
 
-        <div className="hero-system-nav" aria-hidden="true">
-          <div className="hero-system-nav__mark">AI CORE</div>
-          <div className="hero-system-nav__clock">{clock}</div>
-        </div>
-
         <aside className="hero-stage-rail" aria-label="AI core stages">
-          {stages.map((stage, index) => (
-            <div key={stage} className={`hero-stage-rail__stage ${index === activeStage ? "is-active" : ""}`}>
-              <span className="hero-stage-rail__num">{String(index + 1).padStart(2, "0")}</span>
-              <span className="hero-stage-rail__bar" aria-hidden="true" />
-              <span>{stage}</span>
-            </div>
-          ))}
+          <div className="hero-stage-rail__inner">
+            {stages.map((stage, index) => (
+              <div key={stage} className={`hero-stage-rail__stage ${index === activeStage ? "is-active" : ""}`}>
+                <span className="hero-stage-rail__num">{String(index + 1).padStart(2, "0")}</span>
+                <span className="hero-stage-rail__bar" aria-hidden="true" />
+                <span>{stage}</span>
+              </div>
+            ))}
+          </div>
         </aside>
 
         <div className="hero-pin">
-          <motion.p className="hero-scroll-eyebrow" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.15 }}>
-            <span className="hero-scroll-eyebrow__rule" aria-hidden="true" />
-            SYSTEM ONLINE - INGESTING SIGNAL
-          </motion.p>
-
           <motion.h1 className="hero-scroll-headline" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.01, delay: 0.3 }}>
             <span className="hero-scroll-headline__row">
               <motion.span initial={shouldReduceMotion ? false : { y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-                Every stray
+                Raw data becomes
               </motion.span>
             </span>
             <span className="hero-scroll-headline__row">
               <motion.span initial={shouldReduceMotion ? false : { y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}>
-                signal becomes <span className="hero-scroll-headline__accent">a system.</span>
+                <span className="hero-scroll-headline__accent">structured intelligence.</span>
               </motion.span>
             </span>
           </motion.h1>
@@ -140,11 +120,6 @@ export function HeroSection() {
           <motion.p className="hero-scroll-subtext" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: scrollProgress > 0.7 ? 0 : 1 }} transition={{ duration: 0.8, delay: 0.85 }}>
             Raw data enters as noise. The core resolves it into structure, structure into insight, and insight into automations that act on their own.
           </motion.p>
-
-          <motion.div className="hero-scroll-cue" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, delay: 1.1 }} aria-hidden="true">
-            <span>SCROLL TO RESOLVE</span>
-            <span className="hero-scroll-cue__track" />
-          </motion.div>
 
           <motion.div className="hero-panel-tag hero-panel-tag--left" initial={false} animate={{ opacity: scrollProgress > 0.2 ? 1 : 0, y: scrollProgress > 0.2 ? -8 : 0 }}>
             <span className="hero-panel-tag__dot" />
@@ -165,7 +140,7 @@ export function HeroSection() {
         <div className="hero-next-section__inner">
           <p className="hero-next-section__kicker">{String.raw`// WHAT THE CORE DOES NEXT`}</p>
           <h2>
-            Once structured, the same lattice <strong>surfaces the signals worth acting on</strong> and hands them to automations that run without waiting for a human in the loop.
+            Xai turns fragmented inputs into <strong>decision-ready insight</strong>, then connects those insights to AI automations built for product-quality workflows.
           </h2>
         </div>
       </section>
