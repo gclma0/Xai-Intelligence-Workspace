@@ -24,7 +24,7 @@ export function SiteFooter() {
             </a>
           ))}
         </nav>
-        <p className="site-footer__copyright">© 2024 Xai Intelligence. All rights reserved.</p>
+        <p className="site-footer__copyright">© 2026 Xai Intelligence. All rights reserved.</p>
       </div>
     </motion.footer>
   );
