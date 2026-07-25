@@ -117,7 +117,7 @@ export function HeroSection() {
             </span>
           </motion.h1>
 
-          <motion.p className="hero-scroll-subtext" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: scrollProgress > 0.7 ? 0 : 1 }} transition={{ duration: 0.8, delay: 0.85 }}>
+          <motion.p className="hero-scroll-subtext" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: scrollProgress > 0.7 ? 0 : 1 }} transition={{ duration: 0.6, delay: 0.35 }}>
             Raw data enters as noise. The core resolves it into structure, structure into insight, and insight into automations that act on their own.
           </motion.p>
 

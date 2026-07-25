@@ -56,6 +56,7 @@ export function NeuralPipeline() {
           once: true
         }
       });
+      timeline.timeScale(1.55);
 
       timeline.call(() => rootRef.current?.classList.add("is-running"));
 

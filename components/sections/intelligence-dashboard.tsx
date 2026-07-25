@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Bell, Search, Sparkles } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import type { KeyboardEvent } from "react";
 import { dashboardFindings, dashboardNav, dashboardTableRows, dashboardTabs, forecastBars } from "@/data/experience";
 
 function EntityGraph() {
@@ -46,6 +47,25 @@ export function IntelligenceDashboard() {
   const [efficiencyValue, setEfficiencyValue] = useState(0);
   const summaryRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
+
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (event.key !== "ArrowRight" && event.key !== "ArrowLeft" && event.key !== "Home" && event.key !== "End") return;
+
+    event.preventDefault();
+
+    const lastIndex = dashboardTabs.length - 1;
+    const nextIndex =
+      event.key === "Home"
+        ? 0
+        : event.key === "End"
+          ? lastIndex
+          : event.key === "ArrowRight"
+            ? (index + 1) % dashboardTabs.length
+            : (index - 1 + dashboardTabs.length) % dashboardTabs.length;
+
+    setActiveTab(nextIndex);
+    window.requestAnimationFrame(() => document.getElementById(`dashboard-tab-${nextIndex}`)?.focus());
+  }
 
   useEffect(() => {
     if (shouldReduceMotion) {
@@ -173,7 +193,9 @@ export function IntelligenceDashboard() {
                           aria-selected={activeTab === index}
                           aria-controls="dashboard-tab-panel"
                           id={`dashboard-tab-${index}`}
+                          tabIndex={activeTab === index ? 0 : -1}
                           onClick={() => setActiveTab(index)}
+                          onKeyDown={(event) => handleTabKeyDown(event, index)}
                         >
                           {tab.label}
                         </button>
