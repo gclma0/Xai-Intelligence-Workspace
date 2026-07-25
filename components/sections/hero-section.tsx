@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import type { MutableRefObject } from "react";
+import { heroCapabilities } from "@/data/experience";
 
 function IntelligenceCoreFallback() {
   return (
@@ -19,7 +20,7 @@ function IntelligenceCoreFallback() {
   );
 }
 
-const IntelligenceCore = dynamic<{ progressRef: MutableRefObject<number> }>(() => import("@/components/three/intelligence-core").then((mod) => mod.IntelligenceCore), {
+const IntelligenceCore = dynamic<{ progressRef: MutableRefObject<number>; quality?: "desktop" | "mobile" }>(() => import("@/components/three/intelligence-core").then((mod) => mod.IntelligenceCore), {
   ssr: false,
   loading: () => <IntelligenceCoreFallback />
 });
@@ -33,8 +34,27 @@ export function HeroSection() {
   const shouldReduceMotion = useReducedMotion();
   const [activeStage, setActiveStage] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const query = window.matchMedia("(max-width: 768px)");
+    const syncMobileState = () => setIsMobile(query.matches);
+
+    syncMobileState();
+    query.addEventListener("change", syncMobileState);
+
+    return () => query.removeEventListener("change", syncMobileState);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) {
+      targetProgressRef.current = 0.72;
+      progressRef.current = 0.72;
+      setScrollProgress(0.72);
+      setActiveStage(2);
+      return;
+    }
+
     let frame = 0;
     let animationFrame = 0;
     let lastTime = performance.now();
@@ -80,7 +100,76 @@ export function HeroSection() {
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
     };
-  }, [shouldReduceMotion]);
+  }, [isMobile, shouldReduceMotion]);
+
+  if (isMobile) {
+    return (
+      <>
+        <section id="top" className="hero-mobile-section">
+          <div className="page-shell hero-mobile-section__inner">
+            <motion.p className="hero-mobile-kicker" initial={shouldReduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: "easeOut" }}>
+              Intelligence Workspace
+            </motion.p>
+
+            <motion.h1 className="hero-mobile-title" initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.05, ease: "easeOut" }}>
+              Turn Raw Data into <span>Structured Intelligence.</span>
+            </motion.h1>
+
+            <motion.p className="hero-mobile-description" initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.1, ease: "easeOut" }}>
+              Raw data enters as noise. The core resolves it into structure, structure into insight, and insight into automations that act on their own.
+            </motion.p>
+
+            <motion.div className="hero-mobile-actions" initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.15, ease: "easeOut" }}>
+              <a className="button-primary focus-ring" href="#intelligence-dashboard">
+                Open Workspace
+              </a>
+              <a className="button-secondary focus-ring" href="#neural-pipeline">
+                Explore Flow
+              </a>
+            </motion.div>
+
+            <motion.div className="hero-mobile-core" initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.55, delay: 0.18, ease: "easeOut" }} aria-label="AI visual showing fragmented data becoming structured intelligence">
+              <IntelligenceCore progressRef={progressRef} quality="mobile" />
+            </motion.div>
+
+            <div className="hero-mobile-capabilities" aria-label="Core capabilities">
+              {heroCapabilities.map((capability, index) => (
+                <motion.article key={capability.title} className="hero-mobile-capability" initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35, delay: index * 0.05, ease: "easeOut" }}>
+                  <span className="hero-mobile-capability__index">{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h2>{capability.title}</h2>
+                    <p>{capability.copy}</p>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="hero-next-section" aria-label="What the core does next">
+          <div className="hero-next-section__inner">
+            <motion.p
+              className="hero-next-section__kicker"
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              {String.raw`// WHAT THE CORE DOES NEXT`}
+            </motion.p>
+            <motion.h2
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.65, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Xai turns fragmented inputs into <strong>decision-ready insight</strong>, then connects those insights to AI automations built for product-quality workflows.
+            </motion.h2>
+          </div>
+        </section>
+      </>
+    );
+  }
 
   return (
     <>

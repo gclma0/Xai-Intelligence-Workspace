@@ -1,7 +1,7 @@
 "use client";
 
 import { BrainCircuit } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -12,13 +12,19 @@ gsap.registerPlugin(ScrollTrigger);
 export function NeuralPipeline() {
   const rootRef = useRef<HTMLElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const [expandedOutput, setExpandedOutput] = useState(-1);
 
   useEffect(() => {
     if (!rootRef.current) return;
 
-    if (shouldReduceMotion) {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+    if (shouldReduceMotion || isMobile) {
       rootRef.current.classList.add("is-complete");
       rootRef.current.querySelectorAll(".pipeline-output-card").forEach((card) => card.classList.add("is-complete"));
+      if (isMobile) {
+        setExpandedOutput(0);
+      }
       return;
     }
 
@@ -37,6 +43,14 @@ export function NeuralPipeline() {
 
         result.style.setProperty("--pipeline-result-left", `${offset}px`);
       };
+
+      outputCards.forEach((card, index) => {
+        const result = outputResults[index];
+
+        if (result) {
+          placeResultPanel(card, result);
+        }
+      });
 
       gsap.set([".section-heading", ".pipeline-stage-label", ".pipeline-core", ".pipeline-line", ".pipeline-source-card", ".pipeline-output-card", ".pipeline-completion"], { opacity: 0 });
       gsap.set(".section-heading", { y: -8 });
@@ -194,9 +208,17 @@ export function NeuralPipeline() {
 
               return (
                 <motion.article key={output} className={`glass-surface pipeline-card pipeline-card--output pipeline-output-card ${index === 0 ? "pipeline-card--active" : ""}`} whileHover={shouldReduceMotion ? undefined : { borderColor: "rgba(0,112,243,0.46)" }} transition={{ duration: 0.2 }}>
-                  <span className="pipeline-output-label">{output}</span>
+                  <button
+                    className="pipeline-output-label focus-ring"
+                    type="button"
+                    aria-expanded={expandedOutput === index}
+                    aria-controls={`pipeline-output-result-${index}`}
+                    onClick={() => setExpandedOutput((current) => (current === index ? -1 : index))}
+                  >
+                    {output}
+                  </button>
                   <span className="pipeline-complete-dot" aria-hidden="true" />
-                  <div className={`pipeline-output-result pipeline-output-result--${index + 1}`} aria-hidden="true">
+                  <div id={`pipeline-output-result-${index}`} className={`pipeline-output-result pipeline-output-result--${index + 1} ${expandedOutput === index ? "is-expanded" : ""}`} aria-hidden={expandedOutput !== index}>
                     <div className="pipeline-output-result__header">
                       <span>{index === 0 ? "Knowledge Graph" : index === 2 ? "Smart Automation" : detail.status}</span>
                       {(index === 0 || index === 2) && <span className="pipeline-output-result__close">x</span>}

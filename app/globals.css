@@ -135,3 +135,9 @@ button {
     width: min(100% - 32px, var(--container));
   }
 }
+
+@media (max-width: 768px) {
+  .page-shell {
+    width: min(100% - 32px, var(--container));
+  }
+}

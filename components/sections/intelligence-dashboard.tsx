@@ -251,10 +251,10 @@ export function IntelligenceDashboard() {
                         <tbody>
                           {dashboardTableRows.map((row) => (
                             <tr key={row.account}>
-                              <td>{row.account}</td>
-                              <td>{row.signal}</td>
-                              <td>{row.risk}</td>
-                              <td>{row.owner}</td>
+                              <td data-label="Account">{row.account}</td>
+                              <td data-label="Signal">{row.signal}</td>
+                              <td data-label="Risk">{row.risk}</td>
+                              <td data-label="Owner">{row.owner}</td>
                             </tr>
                           ))}
                         </tbody>

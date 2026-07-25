@@ -1,12 +1,14 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { navItems } from "@/data/experience";
 
 export function SiteHeader() {
   const shouldReduceMotion = useReducedMotion();
   const [activeHref, setActiveHref] = useState("#top");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -34,9 +36,27 @@ export function SiteHeader() {
     return () => observers.forEach((o) => o.disconnect());
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen]);
+
+  function closeMenu() {
+    setMenuOpen(false);
+  }
+
   return (
     <motion.header
-      className="site-header"
+      className={`site-header${menuOpen ? " is-menu-open" : ""}`}
       initial={shouldReduceMotion ? false : { opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
@@ -64,6 +84,42 @@ export function SiteHeader() {
             Sign In
           </a>
           <a className="button-primary focus-ring" href="#intelligence-dashboard">
+            Open Workspace
+          </a>
+        </div>
+
+        <button
+          className="site-header__menu-button focus-ring"
+          type="button"
+          aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation"
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+        </button>
+      </div>
+
+      <div id="mobile-navigation" className="site-header__mobile-panel">
+        <nav className="site-header__mobile-nav" aria-label="Mobile navigation">
+          {navItems.map((item) => (
+            <a
+              key={item.label}
+              className={`focus-ring${activeHref === item.href ? " is-active" : ""}`}
+              href={item.href}
+              aria-current={activeHref === item.href ? "page" : undefined}
+              onClick={closeMenu}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="site-header__mobile-actions">
+          <a className="site-header__signin focus-ring" href="#top" onClick={closeMenu}>
+            Sign In
+          </a>
+          <a className="button-primary focus-ring" href="#intelligence-dashboard" onClick={closeMenu}>
             Open Workspace
           </a>
         </div>

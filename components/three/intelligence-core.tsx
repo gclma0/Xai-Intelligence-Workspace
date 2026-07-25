@@ -9,6 +9,7 @@ import { AdditiveBlending, BufferGeometry, Color, Float32BufferAttribute, Icosah
 
 type IntelligenceCoreProps = {
   progressRef?: MutableRefObject<number>;
+  quality?: "desktop" | "mobile";
 };
 
 type BoundaryProps = {
@@ -20,7 +21,8 @@ type BoundaryState = {
   hasError: boolean;
 };
 
-const POINT_COUNT = 2600;
+const POINT_COUNT_DESKTOP = 2600;
+const POINT_COUNT_MOBILE = 1200;
 const GRID_X = 20;
 const GRID_Y = 13;
 const GRID_Z = 5;
@@ -55,16 +57,16 @@ function buildGridPoints() {
   return points;
 }
 
-function buildSceneData() {
-  const chaotic = new Float32Array(POINT_COUNT * 3);
-  const structured = new Float32Array(POINT_COUNT * 3);
-  const colors = new Float32Array(POINT_COUNT * 3);
+function buildSceneData(pointCount: number) {
+  const chaotic = new Float32Array(pointCount * 3);
+  const structured = new Float32Array(pointCount * 3);
+  const colors = new Float32Array(pointCount * 3);
   const cold = new Color("#0070f3");
   const hot = new Color("#aec6ff");
   const lineGrid = buildGridPoints();
   const grid = [...lineGrid].sort((a, b) => seededRandom(a[0] * 13 + a[1] * 17 + a[2] * 19) - seededRandom(b[0] * 13 + b[1] * 17 + b[2] * 19));
 
-  for (let index = 0; index < POINT_COUNT; index += 1) {
+  for (let index = 0; index < pointCount; index += 1) {
     const chaos = randomSpherePoint(index, 4.1);
     const structuredPoint = grid[index % grid.length];
     const pointIndex = index * 3;
@@ -129,14 +131,14 @@ function StaticCore() {
   );
 }
 
-function ParticleLattice({ progressRef, shouldReduceMotion }: { progressRef: MutableRefObject<number>; shouldReduceMotion: boolean | null }) {
+function ParticleLattice({ progressRef, shouldReduceMotion, pointCount }: { progressRef: MutableRefObject<number>; shouldReduceMotion: boolean | null; pointCount: number }) {
   const pointsRef = useRef<Points>(null);
   const groupRef = useRef<Group>(null);
   const lineRef = useRef<LineSegments>(null);
   const coreRef = useRef<Mesh>(null);
   const morphRef = useRef(shouldReduceMotion ? 0.72 : 0);
   const pointerRef = useRef({ x: 0, y: 0 });
-  const data = useMemo(buildSceneData, []);
+  const data = useMemo(() => buildSceneData(pointCount), [pointCount]);
   const geometry = useMemo(() => {
     const pointGeometry = new BufferGeometry();
     pointGeometry.setAttribute("position", new Float32BufferAttribute(data.chaotic.slice(), 3));
@@ -161,7 +163,7 @@ function ParticleLattice({ progressRef, shouldReduceMotion }: { progressRef: Mut
     const positionArray = position.array as Float32Array;
     const colorArray = color.array as Float32Array;
 
-    for (let index = 0; index < POINT_COUNT; index += 1) {
+    for (let index = 0; index < pointCount; index += 1) {
       const pointIndex = index * 3;
       const resolveDelay = seededRandom(index + 501) * 0.08 * (1 - morph);
       const localMorph = MathUtils.smoothstep(MathUtils.clamp((morph - resolveDelay) / 0.9, 0, 1), 0, 1);
@@ -209,18 +211,20 @@ function ParticleLattice({ progressRef, shouldReduceMotion }: { progressRef: Mut
   );
 }
 
-export function IntelligenceCore({ progressRef }: IntelligenceCoreProps) {
+export function IntelligenceCore({ progressRef, quality = "desktop" }: IntelligenceCoreProps) {
   const internalProgressRef = useRef(0);
   const shouldReduceMotion = useReducedMotion();
   const activeProgressRef = progressRef ?? internalProgressRef;
+  const isMobileQuality = quality === "mobile";
+  const pointCount = isMobileQuality ? POINT_COUNT_MOBILE : POINT_COUNT_DESKTOP;
 
   return (
     <div className="intelligence-core intelligence-core--hero">
       <CoreBoundary fallback={<StaticCore />}>
         <Suspense fallback={<StaticCore />}>
-          <Canvas camera={{ position: [0, 0, 8.4], fov: 52 }} dpr={[1, 1.6]} gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} frameloop={shouldReduceMotion ? "demand" : "always"}>
+          <Canvas camera={{ position: [0, 0, isMobileQuality ? 9 : 8.4], fov: isMobileQuality ? 48 : 52 }} dpr={isMobileQuality ? [1, 1.2] : [1, 1.6]} gl={{ alpha: true, antialias: !isMobileQuality, powerPreference: "high-performance" }} frameloop={shouldReduceMotion ? "demand" : "always"}>
             <ambientLight intensity={0.35} color="#10213a" />
-            <ParticleLattice progressRef={activeProgressRef} shouldReduceMotion={shouldReduceMotion} />
+            <ParticleLattice progressRef={activeProgressRef} shouldReduceMotion={shouldReduceMotion} pointCount={pointCount} />
           </Canvas>
         </Suspense>
       </CoreBoundary>

@@ -60,6 +60,8 @@ export function ReasoningEngine() {
   useEffect(() => {
     if (!rootRef.current || shouldReduceMotion) return;
 
+    if (window.matchMedia("(max-width: 768px)").matches) return;
+
     const context = gsap.context(() => {
       gsap
         .timeline({
