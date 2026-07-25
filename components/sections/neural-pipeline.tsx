@@ -132,6 +132,7 @@ export function NeuralPipeline() {
         <div className="section-heading">
           <p className="eyebrow">Neural Pipeline</p>
           <h2>Seamless Data Translation</h2>
+          <p className="section-desc">Raw data from every source — CRM, usage logs, billing, support — flows into the XAI core, processed in real time into structured insights and automated actions.</p>
         </div>
 
         <div className="pipeline-grid">
@@ -199,73 +200,104 @@ export function NeuralPipeline() {
                       <span>{index === 0 ? "Knowledge Graph" : index === 2 ? "Smart Automation" : detail.status}</span>
                       {(index === 0 || index === 2) && <span className="pipeline-output-result__close">x</span>}
                     </div>
-                    {index === 0 && (
-                      <div className="pipeline-mini-graph-shell">
-                        <svg className="pipeline-mini-graph" width="100%" height="100%" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true">
-                          <path className="pipeline-mini-graph__mesh" d="M116 116 L318 74 L500 280 L706 86 L884 128 M116 444 L292 492 L500 280 L708 480 L884 416 M116 116 L116 444 M884 128 L884 416 M318 74 L292 492 M706 86 L708 480" />
-                          <path className="pipeline-mini-graph__link pipeline-mini-graph__link--wide" d="M500 280 L116 116 M500 280 L318 74 M500 280 L706 86 M500 280 L884 128 M500 280 L884 416 M500 280 L708 480 M500 280 L292 492 M500 280 L116 444" />
-                          <path className="pipeline-mini-graph__link" d="M116 116 L318 74 M318 74 L706 86 M706 86 L884 128 M884 128 L884 416 M884 416 L708 480 M708 480 L292 492 M292 492 L116 444 M116 444 L116 116" />
-                          <circle className="pipeline-mini-graph__halo pipeline-mini-graph__halo--outer" cx="500" cy="280" r="228" />
-                          <circle className="pipeline-mini-graph__halo" cx="500" cy="280" r="146" />
-                          <circle className="pipeline-mini-graph__signal" cx="500" cy="280" r="76" />
-                          <circle className="pipeline-mini-graph__node pipeline-mini-graph__node--center" cx="500" cy="280" r="46" />
-                          <circle className="pipeline-mini-graph__node" cx="116" cy="116" r="34" />
-                          <circle className="pipeline-mini-graph__node" cx="318" cy="74" r="32" />
-                          <circle className="pipeline-mini-graph__node" cx="706" cy="86" r="32" />
-                          <circle className="pipeline-mini-graph__node" cx="884" cy="128" r="34" />
-                          <circle className="pipeline-mini-graph__node" cx="884" cy="416" r="34" />
-                          <circle className="pipeline-mini-graph__node" cx="708" cy="480" r="32" />
-                          <circle className="pipeline-mini-graph__node" cx="292" cy="492" r="32" />
-                          <circle className="pipeline-mini-graph__node" cx="116" cy="444" r="34" />
-                          <text className="pipeline-mini-graph__label pipeline-mini-graph__label--center" x="500" y="289">XAI</text>
-                          <text className="pipeline-mini-graph__label" x="116" y="68">CRM</text>
-                          <text className="pipeline-mini-graph__label" x="318" y="26">Usage</text>
-                          <text className="pipeline-mini-graph__label" x="706" y="38">Revenue</text>
-                          <text className="pipeline-mini-graph__label" x="884" y="80">Support</text>
-                          <text className="pipeline-mini-graph__label" x="884" y="480">Risk</text>
-                          <text className="pipeline-mini-graph__label" x="708" y="536">Forecast</text>
-                          <text className="pipeline-mini-graph__label" x="292" y="546">Account</text>
-                          <text className="pipeline-mini-graph__label" x="116" y="508">Intent</text>
-                        </svg>
-                      </div>
-                    )}
-                    {index === 1 && (
-                      <div className="pipeline-mini-kpi">
-                        <span>Churn Risk</span>
-                        <strong>+32%</strong>
-                        <div className="pipeline-mini-bars" aria-hidden="true">
-                          <span />
-                          <span />
-                          <span />
-                          <span />
+                      {index === 0 && (
+                        <div className="pipeline-mini-graph-shell">
+                          <svg className="pipeline-mini-graph" width="100%" height="100%" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true">
+                            <path className="pipeline-mini-graph__mesh" d="M116 116 L318 74 L500 280 L706 86 L884 128 M116 444 L292 492 L500 280 L708 480 L884 416 M116 116 L116 444 M884 128 L884 416 M318 74 L292 492 M706 86 L708 480" />
+                            <path className="pipeline-mini-graph__link pipeline-mini-graph__link--wide" d="M500 280 L116 116 M500 280 L318 74 M500 280 L706 86 M500 280 L884 128 M500 280 L884 416 M500 280 L708 480 M500 280 L292 492 M500 280 L116 444" />
+                            <path className="pipeline-mini-graph__link" d="M116 116 L318 74 M318 74 L706 86 M706 86 L884 128 M884 128 L884 416 M884 416 L708 480 M708 480 L292 492 M292 492 L116 444 M116 444 L116 116" />
+                            <circle className="pipeline-mini-graph__halo pipeline-mini-graph__halo--outer" cx="500" cy="280" r="228" />
+                            <circle className="pipeline-mini-graph__halo" cx="500" cy="280" r="146" />
+                            <circle className="pipeline-mini-graph__signal" cx="500" cy="280" r="76" />
+                            <circle className="pipeline-mini-graph__node pipeline-mini-graph__node--center" cx="500" cy="280" r="54" />
+                            <circle className="pipeline-mini-graph__node" cx="116" cy="116" r="46" />
+                            <circle className="pipeline-mini-graph__node" cx="318" cy="74" r="40" />
+                            <circle className="pipeline-mini-graph__node" cx="706" cy="86" r="40" />
+                            <circle className="pipeline-mini-graph__node" cx="884" cy="128" r="46" />
+                            <circle className="pipeline-mini-graph__node" cx="884" cy="416" r="46" />
+                            <circle className="pipeline-mini-graph__node" cx="708" cy="480" r="40" />
+                            <circle className="pipeline-mini-graph__node" cx="292" cy="492" r="40" />
+                            <circle className="pipeline-mini-graph__node" cx="116" cy="444" r="46" />
+                            <text className="pipeline-mini-graph__label pipeline-mini-graph__label--center" x="500" y="289">XAI</text>
+                          </svg>
                         </div>
-                      </div>
-                    )}
-                    {index === 2 && (
-                      <div className="pipeline-mini-automation-shell">
-                        <svg className="pipeline-mini-automation" width="100%" height="100%" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true">
-                          <text className="pipeline-mini-automation__label" x="48" y="58">Recommended Workflow</text>
-                          <text className="pipeline-mini-automation__copy" x="48" y="96">Automate monthly report generation</text>
-                          <path className="pipeline-mini-automation__rail" d="M118 210 H814" />
-                          <path className="pipeline-mini-automation__branch" d="M316 210 C316 154 392 132 454 132 H618 M548 210 C548 276 616 300 694 300 H818" />
-                          <circle className="pipeline-mini-automation__pulse" cx="118" cy="210" r="72" />
-                          <rect className="pipeline-mini-automation__node pipeline-mini-automation__node--active" x="72" y="164" width="92" height="92" rx="14" />
-                          <rect className="pipeline-mini-automation__node pipeline-mini-automation__node--done" x="270" y="164" width="92" height="92" rx="14" />
-                          <rect className="pipeline-mini-automation__node" x="502" y="164" width="92" height="92" rx="14" />
-                          <rect className="pipeline-mini-automation__node" x="734" y="164" width="92" height="92" rx="14" />
-                          <rect className="pipeline-mini-automation__node pipeline-mini-automation__node--done" x="628" y="104" width="74" height="56" rx="12" />
-                          <rect className="pipeline-mini-automation__node" x="818" y="272" width="86" height="56" rx="12" />
-                          <path className="pipeline-mini-automation__arrow" d="M814 210 H910 M882 178 L914 210 L882 242" />
-                          <path className="pipeline-mini-automation__icon" d="M98 210 H138 M118 190 V230 M296 192 H338 M296 210 H346 M296 228 H330 M526 190 H570 V232 H526 Z M758 188 H800 V232 H758 Z M648 126 H682 M648 142 H674 M840 292 H882 M840 308 H872" />
-                          <text className="pipeline-mini-automation__step" x="118" y="288">Trigger</text>
-                          <text className="pipeline-mini-automation__step" x="316" y="288">Collect</text>
-                          <text className="pipeline-mini-automation__step" x="548" y="288">Generate</text>
-                          <text className="pipeline-mini-automation__step" x="780" y="288">Deliver</text>
-                          <text className="pipeline-mini-automation__label" x="48" y="356">Est. time saved</text>
-                          <text className="pipeline-mini-automation__impact" x="244" y="356">12.4 hrs / month</text>
-                        </svg>
-                      </div>
-                    )}
+                      )}
+                      {index === 1 && (
+                        <div className="pipeline-insight">
+                          <div className="pipeline-insight__row">
+                            <div className="pipeline-insight__arc-wrap">
+                              <svg viewBox="0 0 120 120" className="pipeline-insight__arc" aria-hidden="true">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(0,112,243,0.12)" strokeWidth="7" />
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#0070f3" strokeWidth="7"
+                                  strokeDasharray="314" strokeDashoffset="13" strokeLinecap="round"
+                                  transform="rotate(-90 60 60)"
+                                  style={{ filter: "drop-shadow(0 0 6px rgba(0,112,243,0.6))" }} />
+                              </svg>
+                              <div className="pipeline-insight__arc-label">
+                                <span className="pipeline-insight__pct">96%</span>
+                                <span className="pipeline-insight__conf">CONF</span>
+                              </div>
+                            </div>
+                            <div className="pipeline-insight__signals">
+                              <div className="pipeline-insight__signal">
+                                <span className="pipeline-insight__signal-name">Support Latency</span>
+                                <div className="pipeline-insight__signal-track"><span className="pipeline-insight__signal-fill" style={{ width: "88%" }} /></div>
+                                <span className="pipeline-insight__badge pipeline-insight__badge--high">HIGH</span>
+                              </div>
+                              <div className="pipeline-insight__signal">
+                                <span className="pipeline-insight__signal-name">Integration Errors</span>
+                                <div className="pipeline-insight__signal-track"><span className="pipeline-insight__signal-fill" style={{ width: "64%" }} /></div>
+                                <span className="pipeline-insight__badge pipeline-insight__badge--med">MED</span>
+                              </div>
+                              <div className="pipeline-insight__signal">
+                                <span className="pipeline-insight__signal-name">Product Usage Drop</span>
+                                <div className="pipeline-insight__signal-track"><span className="pipeline-insight__signal-fill" style={{ width: "52%" }} /></div>
+                                <span className="pipeline-insight__badge pipeline-insight__badge--med">MED</span>
+                              </div>
+                              <div className="pipeline-insight__signal">
+                                <span className="pipeline-insight__signal-name">Billing Anomaly</span>
+                                <div className="pipeline-insight__signal-track"><span className="pipeline-insight__signal-fill" style={{ width: "28%" }} /></div>
+                                <span className="pipeline-insight__badge pipeline-insight__badge--low">LOW</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="pipeline-insight__metrics">
+                            <div className="pipeline-insight__metric">
+                              <span className="pipeline-insight__metric-val">47</span>
+                              <span className="pipeline-insight__metric-key">Accounts</span>
+                            </div>
+                            <div className="pipeline-insight__metric">
+                              <span className="pipeline-insight__metric-val">$2.1M</span>
+                              <span className="pipeline-insight__metric-key">ARR at Risk</span>
+                            </div>
+                            <div className="pipeline-insight__metric">
+                              <span className="pipeline-insight__metric-val">6d</span>
+                              <span className="pipeline-insight__metric-key">Avg Runway</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {index === 2 && (
+                        <div className="pipeline-mini-automation-shell">
+                          <svg className="pipeline-mini-automation" width="100%" height="100%" viewBox="0 0 1000 310" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true">
+                            <path className="pipeline-mini-automation__rail" d="M118 155 H814" />
+                            <path className="pipeline-mini-automation__branch" d="M316 155 C316 99 392 77 454 77 H618 M548 155 C548 221 616 245 694 245 H818" />
+                            <circle className="pipeline-mini-automation__pulse" cx="118" cy="155" r="72" />
+                            <rect className="pipeline-mini-automation__node pipeline-mini-automation__node--active" x="72" y="109" width="92" height="92" rx="14" />
+                            <rect className="pipeline-mini-automation__node pipeline-mini-automation__node--done" x="270" y="109" width="92" height="92" rx="14" />
+                            <rect className="pipeline-mini-automation__node" x="502" y="109" width="92" height="92" rx="14" />
+                            <rect className="pipeline-mini-automation__node" x="734" y="109" width="92" height="92" rx="14" />
+                            <rect className="pipeline-mini-automation__node pipeline-mini-automation__node--done" x="628" y="49" width="74" height="56" rx="12" />
+                            <rect className="pipeline-mini-automation__node" x="818" y="217" width="86" height="56" rx="12" />
+                            <path className="pipeline-mini-automation__arrow" d="M814 155 H910 M882 123 L914 155 L882 187" />
+                            <path className="pipeline-mini-automation__icon" d="M98 155 H138 M118 135 V175 M296 137 H338 M296 155 H346 M296 173 H330 M526 135 H570 V177 H526 Z M758 133 H800 V177 H758 Z M648 71 H682 M648 87 H674 M840 237 H882 M840 253 H872" />
+                            <text className="pipeline-mini-automation__step" x="118" y="233">Trigger</text>
+                            <text className="pipeline-mini-automation__step" x="316" y="233">Collect</text>
+                            <text className="pipeline-mini-automation__step" x="548" y="233">Generate</text>
+                            <text className="pipeline-mini-automation__step" x="780" y="233">Deliver</text>
+                          </svg>
+                        </div>
+                      )}
                     <p className="pipeline-output-result__summary">{detail.summary}</p>
                   </div>
                 </motion.article>

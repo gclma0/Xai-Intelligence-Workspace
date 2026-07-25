@@ -107,12 +107,12 @@ export function HeroSection() {
           <motion.h1 className="hero-scroll-headline" initial={shouldReduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.01, delay: 0.3 }}>
             <span className="hero-scroll-headline__row">
               <motion.span initial={shouldReduceMotion ? false : { y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}>
-                Raw data becomes
+                Turn Raw Data into
               </motion.span>
             </span>
             <span className="hero-scroll-headline__row">
               <motion.span initial={shouldReduceMotion ? false : { y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.9, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}>
-                <span className="hero-scroll-headline__accent">structured intelligence.</span>
+                <span className="hero-scroll-headline__accent">Structured Intelligence.</span>
               </motion.span>
             </span>
           </motion.h1>
@@ -138,10 +138,23 @@ export function HeroSection() {
 
       <section className="hero-next-section" aria-label="What the core does next">
         <div className="hero-next-section__inner">
-          <p className="hero-next-section__kicker">{String.raw`// WHAT THE CORE DOES NEXT`}</p>
-          <h2>
+          <motion.p
+            className="hero-next-section__kicker"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            {String.raw`// WHAT THE CORE DOES NEXT`}
+          </motion.p>
+          <motion.h2
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.65, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+          >
             Xai turns fragmented inputs into <strong>decision-ready insight</strong>, then connects those insights to AI automations built for product-quality workflows.
-          </h2>
+          </motion.h2>
         </div>
       </section>
     </>

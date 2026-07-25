@@ -2,9 +2,9 @@ import { Activity, BrainCircuit, CheckCircle, Database, FileText, GitBranch, Lay
 
 export const navItems = [
   { label: "Product", href: "#top" },
+  { label: "Neural Pipeline", href: "#neural-pipeline" },
   { label: "Intelligence", href: "#intelligence-dashboard" },
   { label: "Automations", href: "#automation-builder" },
-  { label: "Resources", href: "#site-footer" }
 ];
 
 export const pipelineSources = [
@@ -126,6 +126,24 @@ export const automationSteps = [
   { label: "AI Analysis", value: "Analyze Risk Profile", icon: BrainCircuit },
   { label: "Entity Match", value: "Customer DB Sync", icon: GitBranch },
   { label: "Outcome", value: "Notify Slack", icon: CheckCircle }
+];
+
+export const automationFeatures = [
+  {
+    stat: "120+",
+    label: "Native Integrations",
+    description: "Connect to your existing stack — Salesforce, Jira, Slack, HubSpot, and more — without writing a line of glue code."
+  },
+  {
+    stat: "12.4h",
+    label: "Saved Per Workflow / Month",
+    description: "Every automation handles the decision loop that used to require a human — from signal detection to action execution."
+  },
+  {
+    stat: "96%",
+    label: "AI Confidence Threshold",
+    description: "Automations only fire when the AI reasoning engine exceeds the configured confidence threshold, keeping humans in control."
+  }
 ];
 
 export const footerLinks = [

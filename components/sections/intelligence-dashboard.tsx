@@ -88,6 +88,18 @@ export function IntelligenceDashboard() {
     <section id="intelligence-dashboard" className="dashboard-section">
       <div className="page-shell">
         <motion.div
+          className="section-heading"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <p className="eyebrow">Intelligence Dashboard</p>
+          <h2>Every Signal. One View.</h2>
+          <p className="section-desc">A unified workspace that surfaces AI-generated findings, predictive forecasts, and actionable recommendations — all in one live dashboard.</p>
+        </motion.div>
+
+        <motion.div
           className="glass-surface dashboard-window"
           initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}

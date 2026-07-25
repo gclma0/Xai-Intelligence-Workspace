@@ -1,10 +1,38 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { navItems } from "@/data/experience";
 
 export function SiteHeader() {
   const shouldReduceMotion = useReducedMotion();
+  const [activeHref, setActiveHref] = useState("#top");
+
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+
+    const handleIntersect = (href: string) => (entries: IntersectionObserverEntry[]) => {
+      if (entries[0].isIntersecting) {
+        setActiveHref(href);
+      }
+    };
+
+    navItems.forEach((item) => {
+      // Convert href like '#neural-pipeline' to id 'neural-pipeline'
+      const id = item.href === "#top" ? "top" : item.href.slice(1);
+      const el = document.getElementById(id);
+      if (!el) return;
+
+      const obs = new IntersectionObserver(handleIntersect(item.href), {
+        rootMargin: "-15% 0px -55% 0px",
+        threshold: 0,
+      });
+      obs.observe(el);
+      observers.push(obs);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
 
   return (
     <motion.header
@@ -20,7 +48,12 @@ export function SiteHeader() {
 
         <nav className="site-header__nav" aria-label="Primary navigation">
           {navItems.map((item) => (
-            <a key={item.label} className="focus-ring" href={item.href}>
+            <a
+              key={item.label}
+              className={`site-header__nav-link focus-ring${activeHref === item.href ? " is-active" : ""}`}
+              href={item.href}
+              aria-current={activeHref === item.href ? "page" : undefined}
+            >
               {item.label}
             </a>
           ))}

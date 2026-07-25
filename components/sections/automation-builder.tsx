@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { automationSteps } from "@/data/experience";
+import { automationSteps, automationFeatures } from "@/data/experience";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,9 +68,10 @@ export function AutomationBuilder() {
   return (
     <section id="automation-builder" className="automation-section" ref={rootRef}>
       <div className="page-shell">
-        <div className="automation-heading">
+        <div className="section-heading automation-heading">
+          <p className="eyebrow">Automation Builder</p>
           <h2>Infinite Automation Possibilities</h2>
-          <p>Build complex reasoning chains with zero friction.</p>
+          <p className="section-desc">Build complex reasoning chains with zero friction. Every workflow is AI-powered, auditable, and ready to act the moment a signal is detected.</p>
         </div>
 
         <div className="automation-flow" role="list" aria-label="Automation workflow">
@@ -100,6 +101,16 @@ export function AutomationBuilder() {
               </div>
             );
           })}
+        </div>
+
+        <div className="automation-features">
+          {automationFeatures.map((feature) => (
+            <div key={feature.label} className="automation-feature-card">
+              <span className="automation-feature-card__stat">{feature.stat}</span>
+              <p className="automation-feature-card__label">{feature.label}</p>
+              <p className="automation-feature-card__desc">{feature.description}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
